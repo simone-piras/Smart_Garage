@@ -1,0 +1,6 @@
+09b32f12|PartiVeloci|Delivered|null|Filtro Aria:200
+186fb35a|MeccanicaPlus|Delivered|null|Pastiglie Freno:13,Candele:10,Batteria Auto:11,Liquido Freni:10,Lampadina Faro:13
+ceacc2b3|MeccanicaPlus|Delivered|null|Lampadina Faro:11
+a00bd870|MeccanicaPlus|Delivered|null|Filtro Olio:10,Olio Motore:10,Pastiglie Freno:100
+da2f7714|Distribuzione Auto Srl|Delivered|null|Olio Motore:100
+d398fe25|PartiVeloci|Delivered|null|Liquido Freni:13,Lampadina Faro:13

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="742.0" prefWidth="1041.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1"
+   fx:controller="gui.GarageHomeController">
+   <left>
+      <VBox fx:id="sideMenu" visible="false" alignment="TOP_CENTER" prefHeight="683.0" prefWidth="202.0" spacing="40.0" style="-fx-border-color: black;" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="userGreetingLabel" text="HI USER">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Button fx:id="homeButton" onAction="#goToHome" mnemonicParsing="false" prefHeight="25.0" prefWidth="227.0" text="HOME" />
+            <Button fx:id="settingButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="211.0" text="SETTINGS" />
+            <Button fx:id="profileButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="219.0" text="YOUR PROFILE" />
+            <Button fx:id="logoutButton" onAction="#handleLogout" mnemonicParsing="false" prefHeight="25.0" prefWidth="198.0" text="LOGOUT" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="RED" height="12.0" stroke="BLACK" strokeType="INSIDE" width="200.0" />
+            <Button fx:id="inventoryButton" onAction="#goToInventory" mnemonicParsing="false" prefHeight="25.0" prefWidth="201.0" text="INVENTORY" />
+            <Button fx:id="calendarButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="220.0" text="CALENDAR" />
+            <Button fx:id="orderSparePartsButton" onAction="#goToOrder" mnemonicParsing="false" prefHeight="25.0" prefWidth="228.0" text="ORDER SPARE PARTS" />
+            <Button fx:id="discoverSuppliersButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="229.0" text="DISCOVER SUPPLIERS" />
+            <Button fx:id="messagesButton" onAction="#goToMessages" mnemonicParsing="false" prefHeight="25.0" prefWidth="213.0" text="MESSAGES" />
+         </children>
+         <BorderPane.margin>
+            <Insets top="115.0" />
+         </BorderPane.margin>
+      </VBox>
+   </left>
+   <top>
+      <HBox alignment="BOTTOM_LEFT" prefHeight="60.0" prefWidth="1078.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="hamburgerButton" onAction="#toggleSideMenu" mnemonicParsing="false" text="☰" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="RED" height="12.0" stroke="BLACK" strokeType="INSIDE" width="963.0" />
+            <Button fx:id="closeButton" onAction="#handleClose" mnemonicParsing="false" text="X" />
+            <ImageView fitHeight="27.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@/images/Home4.jpg" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
+   </top>
+   <center>
+      <ImageView fitHeight="522.0" fitWidth="582.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+         <image>
+            <Image url="@/images/Home1.png" />
+         </image>
+         <BorderPane.margin>
+            <Insets bottom="50.0" />
+         </BorderPane.margin>
+      </ImageView>
+   </center>
+   <opaqueInsets>
+      <Insets />
+   </opaqueInsets>
+   <right>
+      <VBox alignment="CENTER" prefHeight="682.0" prefWidth="228.0" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@/images/Home2.png" />
+               </image>
+            </ImageView>
+            <Button fx:id="openOrderButton" onAction="#goToOrder" mnemonicParsing="false" prefHeight="25.0" prefWidth="254.0" text="PLACE  YOUR ORDER NOW!" />
+            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@/images/Home3.png" />
+               </image>
+            </ImageView>
+            <Button fx:id="openInventoryButton" onAction="#goToInventory" mnemonicParsing="false" prefHeight="25.0" prefWidth="290.0" text="CHECK YOUR INVENTORY" />
+         </children>
+      </VBox>
+   </right>
+   <bottom>
+      <ScrollPane prefHeight="129.0" prefWidth="831.0" BorderPane.alignment="CENTER">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="120.0" prefWidth="772.0">
+               <children>
+                  <Label layoutX="14.0" layoutY="19.0" text="OTHER SUPPLIERS THAT MAY INTEREST YOU:" />
+                  <Label fx:id="defaultSupplierLabel" layoutX="14.0" layoutY="-10.0" prefHeight="33.0" prefWidth="377.0" text="YOUR DEFAULT SUPPLIER: SUPPLIERNAME">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="18.0" layoutY="44.0" text="AutoRicambi S.p.A.: discount up to 80%" />
+                  <Label layoutX="19.0" layoutY="70.0" text="MeccanicaPlus: discount up to 60%" />
+                  <Label layoutX="20.0" layoutY="92.0" text="Distribuzione Auto Srl: new annual promotion with discounts up to 50%" />
+                  <Button fx:id="setDefaultBotton1" onAction="#handleSetDefault1" layoutX="241.0" layoutY="42.0" mnemonicParsing="false" prefHeight="21.0" prefWidth="92.0" style="-fx-background-color: red;" text="SET AS DEFAULT">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="setDefaultBotton2" onAction="#handleSetDefault2" layoutX="242.0" layoutY="70.0" mnemonicParsing="false" prefHeight="19.0" prefWidth="90.0" style="-fx-background-color: red;" text="SET AD DEFAULT">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Button>
+                  <Button  fx:id="setDefaultBotton3" onAction="#handleSetDefault3" layoutX="413.0" layoutY="90.0" mnemonicParsing="false" style="-fx-background-color: red;" text="SET AS DEFAULT">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Button>
+               </children>
+            </AnchorPane>
+        </content>
+         <padding>
+            <Insets left="60.0" />
+         </padding>
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="210.0" />
+         </BorderPane.margin>
+      </ScrollPane>
+   </bottom>
+</BorderPane>

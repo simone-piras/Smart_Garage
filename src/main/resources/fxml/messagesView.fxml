@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+
+<SplitPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="742.0" prefWidth="1041.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MessageViewController">
+    <items>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+            <children>
+                <VBox fx:id="sideMenu" alignment="TOP_CENTER" layoutY="61.0" prefHeight="679.0" prefWidth="202.0" spacing="40.0" style="-fx-border-color: black;" visible="true">
+                    <children>
+                        <Label fx:id="usernameLabel" text="HI USER">
+                            <font>
+                                <Font size="18.0" />
+                            </font>
+                        </Label>
+                        <Button fx:id="homeButton" mnemonicParsing="false" onAction="#goToHome" prefHeight="25.0" prefWidth="218.0" text="HOME" />
+                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="339.0" text="SETTINGS" />
+                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="203.0" text="YOUR PROFILE" />
+                        <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#handleLogout" prefHeight="25.0" prefWidth="210.0" text="LOGOUT" />
+                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="RED" height="24.0" stroke="BLACK" strokeType="INSIDE" width="200.0" />
+                        <Button fx:id="inventoryButton" mnemonicParsing="false" onAction="#goToInventory" prefHeight="25.0" prefWidth="302.0" text="INVENTORY" />
+                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="281.0" text="CALENDAR" />
+                        <Button fx:id="orderButton" mnemonicParsing="false" onAction="#goToOrder" prefHeight="25.0" prefWidth="345.0" text="ORDER SPARE PARTS" />
+                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="222.0" text="DISCOVER SUPPLIERS" />
+                        <Button fx:id="messagesButton" mnemonicParsing="false" onAction="#goToMessages" prefHeight="25.0" prefWidth="293.0" text="MESSAGES" />
+                    </children>
+                </VBox>
+
+                <HBox alignment="BOTTOM_LEFT" layoutY="1.0" prefHeight="60.0" prefWidth="1039.0">
+                    <children>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="60.0" prefWidth="1040.0">
+                            <children>
+                                <Button fx:id="hamburgerButton" layoutY="38.0" mnemonicParsing="false" onAction="#toggleSideMenu" text="☰" />
+                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="RED" height="23.0" layoutX="28.0" layoutY="38.0" stroke="BLACK" strokeType="INSIDE" width="948.0" />
+                                <Button fx:id="backButton" layoutX="976.0" layoutY="37.0" mnemonicParsing="false" onAction="#goBack" text="back" />
+                                <Button fx:id="closeButton" layoutX="1017.0" layoutY="37.0" mnemonicParsing="false" onAction="#handleClose" text="X" />
+                            </children>
+                        </AnchorPane>
+                    </children>
+                </HBox>
+
+                <Label layoutX="230.0" layoutY="80.0" text="YOUR MESSAGES">
+                    <font>
+                        <Font size="26.0" />
+                    </font>
+                </Label>
+
+                <Button layoutX="458.0" layoutY="87.0" mnemonicParsing="false" style="-fx-background-color: RED; -fx-text-fill: black;" text="🔄 Refresh" />
+
+                <!--Usa VBox principale invece di AnchorPane!! -->
+                <VBox layoutX="202.0" layoutY="118.0" prefWidth="843.0" spacing="10.0">
+                    <children>
+                        <!-- ScrollPane per i messaggi -->
+                        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="400.0" prefWidth="843.0" vbarPolicy="AS_NEEDED">
+                            <content>
+                                <VBox fx:id="messagesBox" spacing="10.0">
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                    </padding>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+
+                        <!-- ✅ Contenuto sotto la ScrollPane (immagine e label) -->
+                        <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: #f0f0f0; -fx-padding: 10;">
+                            <children>
+                                <ImageView fitHeight="60.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@/images/messages2.png" />
+                                    </image>
+                                </ImageView>
+                                <Label style="-fx-font-size: 14; -fx-text-fill: #333;" text="GET NOTIFIED FASTER, LINK YOUR GMAIL NOW!" />
+                                <Button mnemonicParsing="false" style="-fx-background-color: red; -fx-text-fill: black;" text="CONNECT NOW!" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </AnchorPane>
+    </items>
+</SplitPane>

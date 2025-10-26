@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="742.0" prefWidth="1041.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1"
+   fx:controller="gui.LoginViewController">
+   <children>
+      <HBox prefHeight="500.0" prefWidth="800.0" spacing="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <ImageView fitHeight="743.0" fitWidth="738.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@/images/main1.png" />
+               </image>
+            </ImageView>
+            <VBox alignment="CENTER" prefHeight="726.0" prefWidth="495.0" spacing="5.0">
+               <children>
+                  <ButtonBar prefHeight="40.0" prefWidth="200.0">
+                    <buttons>
+                      <Button fx:id="backButton" onAction="#handleBack" mnemonicParsing="false" text="Back" />
+                        <Button fx:id="closeButton" onAction="#handleClose" mnemonicParsing="false" text="X" />
+                    </buttons>
+                  </ButtonBar>
+                  <ImageView fitHeight="186.0" fitWidth="495.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@/images/main2.png" />
+                     </image>
+                  </ImageView>
+                  <Label text="ENTER YOUR CREDENTIALS">
+                     <font>
+                        <Font size="21.0" />
+                     </font>
+                  </Label>
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="RED" height="29.0" stroke="BLACK" strokeType="INSIDE" width="494.0" />
+                  <Label text="USERNAME:">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="usernameField" />
+                  <Label text="PASSWORD:">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="passwordField"/>
+                  <Button fx:id="loginButton" onAction="#handleLogin" mnemonicParsing="false" style="-fx-background-color: #FF0000;" text="LOGIN">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Button>
+                  <Label fx:id="errorLabel" text="" textFill="red" visible="false">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+
+                  <Label prefHeight="45.0" prefWidth="310.0" text="DO YOU HAVE A GOOGLE ACCOUNT?">
+                     <font>
+                     <Font size="18.0" />
+                  </font>
+                  </Label>
+                  <Button fx:id="googleLoginButton" onAction="#handleGoogleLogin" mnemonicParsing="false" style="-fx-background-color: #ff0000;" text="LOGIN WITH GOOGLE">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Button>
+               </children>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+               <padding>
+                  <Insets bottom="150.0" />
+               </padding>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>

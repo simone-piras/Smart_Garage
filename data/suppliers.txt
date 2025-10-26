@@ -1,0 +1,4 @@
+1|AutoRicambi S.p.A.|contatti@autoricambi.it|0111234567|false
+2|MeccanicaPlus|info@meccaplus.it|0109876543|false
+3|PartiVeloci|ordini@partiveloci.it|0813344556|false
+4|Distribuzione Auto Srl|service@distribauto.it|0394455667|false
