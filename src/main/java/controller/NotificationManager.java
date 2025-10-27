@@ -76,7 +76,7 @@ public class NotificationManager {
         }
 
         InventoryManager inventoryManager = new InventoryManager();
-        List<PartBean> lowStockParts = inventoryManager.getLowStockParts();
+        List<PartBean> lowStockParts = inventoryManager.getLowStockParts(); //devo metterlo nel VOPC?
 
         for (PartBean part : lowStockParts) {
             String msg = "Scorte basse per la parte: " + part.getName()

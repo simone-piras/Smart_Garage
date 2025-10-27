@@ -84,7 +84,7 @@ public class OrderViewController {
         }
 
         for (NotificationBean n : suggestedOrder) {
-            if (n.isHasSuggestedOrder()) { // ✅ CORREGGI: isHasSuggestedOrder()
+            if (n.isHasSuggestedOrder()) {
                 HBox row = new HBox(10);
                 Label partLabel = new Label(n.getPartName() + " x " + n.getSuggestedQuantity());
 
@@ -121,7 +121,7 @@ public class OrderViewController {
         HBox newRow = new HBox(10);
 
         ComboBox<String> nameCombo = new ComboBox<>();
-        inventoryBoundary.getAllParts().forEach(part -> nameCombo.getItems().add(part.getName())); // ✅ CORREGGI: usa boundary
+        inventoryBoundary.getAllParts().forEach(part -> nameCombo.getItems().add(part.getName()));
         nameCombo.setEditable(true);
 
         Spinner<Integer> qtySpinner = new Spinner<>(1, 999, 1);
@@ -201,9 +201,9 @@ public class OrderViewController {
             orderStatusLabel.setText("");
         }
 
-        // ✅ CORREGGI: usa boundary invece di creare UUID manualmente
+
         currentOrder = orderBoundary.createOrder(loggedUsername, supplierName, items);
-        orderStatusLabel.setText("Ordine confermato!");
+        showOrderConfirmationPopup(currentOrder);
         orderBoardBox.getChildren().removeIf(node -> node instanceof Button b && b.getText().contains("Conferma ordine"));
     }
 
@@ -211,8 +211,7 @@ public class OrderViewController {
         List<OrderItemBean> items = new ArrayList<>();
 
         for (NotificationBean n : suggestedOrder) {
-            if (n.isHasSuggestedOrder() && n.getSuggestedQuantity() > 0) { // ✅ CORREGGI: isHasSuggestedOrder()
-                // ✅ CORREGGI: usa costruttore vuoto + setters
+            if (n.isHasSuggestedOrder() && n.getSuggestedQuantity() > 0) {
                 OrderItemBean item = new OrderItemBean();
                 item.setPartName(n.getPartName());
                 item.setQuantity(n.getSuggestedQuantity());
@@ -240,7 +239,7 @@ public class OrderViewController {
                             .anyMatch(p -> p.getName().equals(finalName));
                     if (!exists) throw new PartNotFoundException("Parte non trovata: " + finalName);
 
-                    // ✅ CORREGGI: usa costruttore vuoto + setters
+
                     OrderItemBean item = new OrderItemBean();
                     item.setPartName(finalName);
                     item.setQuantity(qty);
@@ -258,7 +257,7 @@ public class OrderViewController {
             return;
         }
 
-        // ✅ CORREGGI: usa boundary invece di OrderManager direttamente
+
         OrderBean order = orderBoundary.getAllOrders().stream()
                 .filter(o -> o.getOrderID().equals(currentOrder.getOrderID()))
                 .findFirst()
@@ -269,6 +268,62 @@ public class OrderViewController {
         } else {
             showAlert(Alert.AlertType.INFORMATION, "Ordine non trovato.");
         }
+    }
+
+    private void showOrderConfirmationPopup(OrderBean order) {
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Conferma Ordine");
+        dialog.setHeaderText("ORDINE CONFERMATO CON SUCCESSO!");
+
+
+        DialogPane dialogPane = dialog.getDialogPane();
+        dialogPane.setStyle("-fx-background-color: #f0f8ff; -fx-border-color: #0066cc; -fx-border-width: 2px;");
+
+
+        VBox content = new VBox(10);
+        content.setStyle("-fx-padding: 20px; -fx-alignment: center;");
+
+        Label successLabel = new Label("Il tuo ordine è stato confermato!");
+        successLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #0066cc;");
+
+        Label orderIdLabel = new Label("ID Ordine: #" + order.getOrderID());
+        orderIdLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+
+        Label supplierLabel = new Label("Fornitore: " + order.getSupplierName());
+        supplierLabel.setStyle("-fx-font-size: 14px;");
+
+        Label statusLabel = new Label("Stato: " + order.getStatus().toString());
+        statusLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: green;");
+
+
+        Label itemsLabel = new Label("Articoli ordinati:");
+        itemsLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #333333;");
+
+        VBox itemsBox = new VBox(5);
+        for (OrderItemBean item : order.getItems()) {
+            Label itemLabel = new Label("  • " + item.getPartName() + " x " + item.getQuantity());
+            itemLabel.setStyle("-fx-font-size: 12px;");
+            itemsBox.getChildren().add(itemLabel);
+        }
+
+        content.getChildren().addAll(
+                successLabel, orderIdLabel, supplierLabel, statusLabel,
+                new Separator(), itemsLabel, itemsBox
+        );
+
+        dialogPane.setContent(content);
+
+
+        ButtonType okButton = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+        dialogPane.getButtonTypes().addAll(okButton);
+
+
+        Button okBtn = (Button) dialogPane.lookupButton(okButton);
+        okBtn.setStyle("-fx-background-color: #0066cc; -fx-text-fill: white; -fx-font-weight: bold;");
+
+
+        dialog.showAndWait();
+
     }
 
     // === NAVIGAZIONE ===

@@ -4,3 +4,5 @@ ceacc2b3|MeccanicaPlus|Delivered|null|Lampadina Faro:11
 a00bd870|MeccanicaPlus|Delivered|null|Filtro Olio:10,Olio Motore:10,Pastiglie Freno:100
 da2f7714|Distribuzione Auto Srl|Delivered|null|Olio Motore:100
 d398fe25|PartiVeloci|Delivered|null|Liquido Freni:13,Lampadina Faro:13
+72595c8e|MeccanicaPlus|Delivered|null|Filtro Olio:10
+4dea747c|MeccanicaPlus|Delivered|null|Olio Motore:50
