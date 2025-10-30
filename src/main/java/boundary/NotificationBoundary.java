@@ -41,17 +41,8 @@ public class NotificationBoundary {
         notificationManager.addNotification(notificationBean);
     }
 
-    public void refreshLowStockNotificationsForPart(String partName) {
-        notificationManager.refreshLowStockNotificationsForPart(partName);
-    }
-
-    // 🔹 Metodo per aggiornare manualmente le notifiche
-    public void refreshLowStockNotifications() {
-        notificationManager.refreshLowStockNotifications();
-    }
-
-    // 🔹 Metodo per svuotare tutte le notifiche
-    public void clearNotifications() {
-        notificationManager.clearNotifications();
-    }
+    // ❌ ELIMINATI - NON SERVONO PIÙ
+    // public void refreshLowStockNotificationsForPart(String partName) { ... }
+    // public void refreshLowStockNotifications() { ... }
+    // public void clearNotifications() { ... }
 }

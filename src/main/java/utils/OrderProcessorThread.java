@@ -88,11 +88,13 @@ public class OrderProcessorThread extends Thread {
                 );
                 notificationBoundary.addNotification(deliveryNotif);
 
-                // Aggiorna notifiche scorte basse
-                //new NotificationController(SharedManagers.getNotificationManager()).refreshLowStockNotifications();
-                for (OrderItemBean item : deliveredOrder.getItems()) {
-                    notificationBoundary.refreshLowStockNotificationsForPart(item.getPartName());
-                }
+                // ✅ MODIFICA: LE NOTIFICHE SCORTE BASSE SI CREANO AUTOMATICAMENTE
+                // QUANDO inventoryManager.addQuantityToPart() CHIAMA checkThreshold()
+                // → notifyObserver() → NotificationManager.update()
+                // → addNotification() → SALVA NEL DB
+
+                // ❌ ELIMINATO: notificationBoundary.refreshLowStockNotificationsForPart(item.getPartName());
+                // ❌ ELIMINATO: new NotificationController(SharedManagers.getNotificationManager()).refreshLowStockNotifications();
             }
 
         } catch (InterruptedException e) {

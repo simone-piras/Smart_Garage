@@ -6,3 +6,4 @@ da2f7714|Distribuzione Auto Srl|Delivered|null|Olio Motore:100
 d398fe25|PartiVeloci|Delivered|null|Liquido Freni:13,Lampadina Faro:13
 72595c8e|MeccanicaPlus|Delivered|null|Filtro Olio:10
 4dea747c|MeccanicaPlus|Delivered|null|Olio Motore:50
+7e43c0a6|MeccanicaPlus|Delivered|null|Lampadina Faro:10,Filtro Aria:1

@@ -25,11 +25,15 @@ public class InventoryManager implements Subject {
     public InventoryManager() {
         this.inventoryDAO = ApplicationContext.getInstance().getDAOFactory().getInventoryDAO();
         this.notificationManager = new NotificationManager();
+        // ✅ REGISTRA NotificationManager COME OBSERVER
+        this.addObserver(notificationManager);
     }
 
     public InventoryManager(NotificationManager notificationManager) {
         this.inventoryDAO = ApplicationContext.getInstance().getDAOFactory().getInventoryDAO();
         this.notificationManager = notificationManager;
+        // ✅ REGISTRA NotificationManager COME OBSERVER
+        this.addObserver(notificationManager);
     }
 
     // ✅ OBSERVER PATTERN - INVARIATO
@@ -50,15 +54,14 @@ public class InventoryManager implements Subject {
         }
     }
 
-    // 🔄 METODI CON MAPPER
+    // 🔄 METODI CON MAPPER - RIMOSSE CHIAMATE A refreshLowStockNotifications
     public void addPart(PartBean partBean) {
         PartEntity entity = mapperFactory.toEntity(partBean, PartEntity.class);
         inventoryDAO.savePart(entity);
 
-        // Converti per la logica business
         PartBean savedPart = mapperFactory.toBean(entity, PartBean.class);
         checkThreshold(savedPart);
-        notificationManager.refreshLowStockNotifications();
+        // ❌ RIMOSSO: notificationManager.refreshLowStockNotifications();
     }
 
     public void updatePart(PartBean partBean) {
@@ -67,7 +70,7 @@ public class InventoryManager implements Subject {
 
         PartBean updatedPart = mapperFactory.toBean(entity, PartBean.class);
         checkThreshold(updatedPart);
-        notificationManager.refreshLowStockNotifications();
+        // ❌ RIMOSSO: notificationManager.refreshLowStockNotifications();
     }
 
     public boolean usePart(String partName, int quantityUsed) throws InsufficientStockException, PartNotFoundException {
@@ -85,7 +88,7 @@ public class InventoryManager implements Subject {
         inventoryDAO.updatePart(updatedEntity);
 
         checkThreshold(updated);
-        notificationManager.refreshLowStockNotifications();
+        // ❌ RIMOSSO: notificationManager.refreshLowStockNotifications();
         return true;
     }
 
@@ -123,7 +126,7 @@ public class InventoryManager implements Subject {
 
             inventoryDAO.updatePart(updatedEntity);
             checkThreshold(updated);
-            notificationManager.refreshLowStockNotifications();
+            // ❌ RIMOSSO: notificationManager.refreshLowStockNotifications();
             return true;
         }
         return false;
@@ -135,7 +138,7 @@ public class InventoryManager implements Subject {
 
         PartBean savedPart = mapperFactory.toBean(entity, PartBean.class);
         checkThreshold(savedPart);
-        notificationManager.refreshLowStockNotifications();
+        // ❌ RIMOSSO: notificationManager.refreshLowStockNotifications();
         return true;
     }
 
@@ -146,8 +149,8 @@ public class InventoryManager implements Subject {
                     LocalDate.now().toString(), part.getName());
             notification.setHasSuggestedOrder(true);
             notification.setSuggestedQuantity((part.getReorderThreshold() + 10) - part.getQuantity());
-            notifyObserver(notification);
-            notificationManager.addNotification(notification);
+            notifyObserver(notification); // ✅ NOTIFICA TUTTI GLI OBSERVER (INCLUSA NOTIFICATIONMANAGER)
+            // ❌ RIMOSSO: notificationManager.addNotification(notification);
         } else {
             notificationManager.removeNotificationsByPartName(part.getName());
         }
