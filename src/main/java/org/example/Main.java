@@ -33,7 +33,7 @@ public class Main {
                 Scheduler.attivaEventSchedulerComeRoot();
             }
             case "3" -> {
-                 ApplicationContext.getInstance().setPersistenceType(PersistenceType.FILE);
+                ApplicationContext.getInstance().setPersistenceType(PersistenceType.FILE);
                 FileDataLoader fileDataLoader = new FileDataLoader();
                 fileDataLoader.load();
             }

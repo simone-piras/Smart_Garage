@@ -77,4 +77,3 @@ Ha un costruttore privato (private ApplicationContext()), che impedisce la creaz
 Ha una variabile statica instance per tenere l’unica istanza → ✔️
 
 Ha un metodo getInstance() che controlla e restituisce sempre la stessa istanza → ✔️*/
-

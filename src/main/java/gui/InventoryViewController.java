@@ -203,4 +203,3 @@ public class InventoryViewController implements Observer {
         } catch (Exception e) { e.printStackTrace(); }
     }
 }
-

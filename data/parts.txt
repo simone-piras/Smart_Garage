@@ -1,9 +1,9 @@
-0|Filtro Olio|15|5
+0|Filtro Olio|5|5
 0|Filtro Aria|205|3
 0|Pastiglie Freno|115|5
 0|Olio Motore|164|4
 0|Candele|13|3
-0|Batteria Auto|12|2
+0|Batteria Auto|2|2
 7|Fanale Posteriore|7|2
 8|Cinghia Distribuzione|6|4
 0|Liquido Freni|15|5
