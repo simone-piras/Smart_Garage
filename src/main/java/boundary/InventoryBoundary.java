@@ -5,6 +5,7 @@ import exception.InsufficientStockException;
 import exception.PartNotFoundException;
 import controller.InventoryManager;
 import controller.NotificationManager;
+import utils.SharedManagers;  // ✅ AGGIUNGI QUESTA IMPORT
 
 import java.util.List;
 
@@ -12,17 +13,19 @@ public class InventoryBoundary {
     private final InventoryManager inventoryManager;
     private final NotificationManager notificationManager;
 
-    //CLI
+    // CLI - MODIFICATO
     public InventoryBoundary(){
-        this.inventoryManager = new InventoryManager();
-        this.notificationManager = new NotificationManager();
+        this.inventoryManager = SharedManagers.getInstance().getInventoryManager();        // ✅ MODIFICATO
+        this.notificationManager = SharedManagers.getInstance().getNotificationManager();  // ✅ MODIFICATO
     }
 
+    // GUI - RIMANE INVARIATO
     public InventoryBoundary(InventoryManager sharedInventorymanager, NotificationManager sharedNotificationManager){
         this.inventoryManager = sharedInventorymanager;
         this.notificationManager = sharedNotificationManager;
     }
 
+    // ✅ TUTTI I METODI RIMANGONO INVARIATI
     public List<PartBean> getAllParts() {
         return inventoryManager.getAllParts();
     }

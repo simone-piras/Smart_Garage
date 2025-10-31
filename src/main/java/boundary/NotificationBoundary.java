@@ -3,6 +3,7 @@ package boundary;
 import bean.NotificationBean;
 import bean.OrderItemBean;
 import controller.NotificationManager;
+import utils.SharedManagers;  // ✅ AGGIUNGI QUESTA IMPORT
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,14 +11,17 @@ import java.util.List;
 public class NotificationBoundary {
     private final NotificationManager notificationManager;
 
+    // MODIFICATO
     public NotificationBoundary(){
-        this.notificationManager = new NotificationManager();
+        this.notificationManager = SharedManagers.getInstance().getNotificationManager();  // ✅ MODIFICATO
     }
 
+    // RIMANE INVARIATO
     public NotificationBoundary(NotificationManager sharedNotificationManager){
         this.notificationManager = sharedNotificationManager;
     }
 
+    // ✅ TUTTI I METODI RIMANGONO INVARIATI
     public List<NotificationBean> getAllNotifications() {
         return notificationManager.getAllNotifications();
     }
@@ -40,6 +44,7 @@ public class NotificationBoundary {
         notificationBean.validate();
         notificationManager.addNotification(notificationBean);
     }
+
 
     // ❌ ELIMINATI - NON SERVONO PIÙ
     // public void refreshLowStockNotificationsForPart(String partName) { ... }

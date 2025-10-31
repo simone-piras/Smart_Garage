@@ -46,8 +46,8 @@ public class LoginViewController {
 
     @FXML
     private void handleLogin(ActionEvent event) {
-        NotificationManager sharedNotificationManager = SharedManagers.getNotificationManager();
-        InventoryManager sharedInventoryManager = SharedManagers.getInventoryManager();
+        NotificationManager sharedNotificationManager = SharedManagers.getInstance().getNotificationManager(); // ✅ MODIFICATO
+        InventoryManager sharedInventoryManager = SharedManagers.getInstance().getInventoryManager(); // ✅ MODIFICATO
 
         String username = usernameField.getText();
         String password = passwordField.getText();
@@ -95,8 +95,8 @@ public class LoginViewController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GarageHomeView.fxml"));
             Parent root = loader.load();
 
-            NotificationManager sharedNotificationManager = SharedManagers.getNotificationManager();
-            InventoryManager sharedInventoryManager = SharedManagers.getInventoryManager();
+            NotificationManager sharedNotificationManager = SharedManagers.getInstance().getNotificationManager(); // ✅ MODIFICATO
+            InventoryManager sharedInventoryManager = SharedManagers.getInstance().getInventoryManager(); // ✅ MODIFICATO
 
             GarageHomeController controller = loader.getController();
             controller.initData(username, sharedInventoryManager, sharedNotificationManager);

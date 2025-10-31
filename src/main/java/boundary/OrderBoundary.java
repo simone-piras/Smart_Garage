@@ -17,7 +17,7 @@ public class OrderBoundary {
     private final OrderManager orderManager = new OrderManager();
     private final UserManager userManager = new UserManager();
     private final SupplierManager supplierManager = new SupplierManager();
-    private final NotificationBoundary notificationBoundary = new NotificationBoundary(SharedManagers.getNotificationManager());
+    private final NotificationBoundary notificationBoundary = new NotificationBoundary(SharedManagers.getInstance().getNotificationManager());
 
     /** Crea un ordine manuale */
     public OrderBean createOrder(String username, String supplierName, List<OrderItemBean> items) {

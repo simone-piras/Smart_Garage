@@ -21,8 +21,8 @@ public class OrderProcessorThread extends Thread {
     public OrderProcessorThread(OrderBean order) {
         this.order = order;
         this.orderManager = new OrderManager();
-        this.inventoryManager = new InventoryManager();
-        this.notificationBoundary = new NotificationBoundary(SharedManagers.getNotificationManager());
+        this.inventoryManager = SharedManagers.getInstance().getInventoryManager(); // ✅ MODIFICATO
+        this.notificationBoundary = new NotificationBoundary(SharedManagers.getInstance().getNotificationManager());
     }
 
     @Override

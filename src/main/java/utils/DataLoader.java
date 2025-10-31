@@ -14,7 +14,7 @@ public class DataLoader {
     private final InventoryBoundary inventoryBoundary = new InventoryBoundary();
     private final SupplierBoundary supplierBoundary = new SupplierBoundary();
     private final UserBoundary userBoundary = new UserBoundary();
-    private final NotificationManager notificationManager = new NotificationManager();
+    private final NotificationManager notificationManager = SharedManagers.getInstance().getNotificationManager(); // ✅ MODIFICATO
 
     public void load() {
         loadParts();

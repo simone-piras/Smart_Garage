@@ -25,8 +25,8 @@ public class FileDataLoader {
         inventoryBoundary = new InventoryBoundary();
         supplierBoundary = new SupplierBoundary();
         userBoundary = new UserBoundary();
-        notificationManager = new NotificationManager();
-        inventoryManager = new InventoryManager();
+        notificationManager = SharedManagers.getInstance().getNotificationManager(); // ✅ MODIFICATO
+        inventoryManager = SharedManagers.getInstance().getInventoryManager(); // ✅ MODIFICATO
     }
 
     public void load() {
