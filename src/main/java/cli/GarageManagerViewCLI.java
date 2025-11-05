@@ -217,15 +217,127 @@ public class GarageManagerViewCLI {
                 System.out.println("- " + item.getPartName() + " x " + item.getQuantity());
             }
 
-            System.out.print("\nVuoi confermare l'ordine suggerito? (s/n): ");
-            if (SCANNER.nextLine().equalsIgnoreCase("s")) {
-                String supplierName = selezionaFornitore(userBoundary.getUser(username));
-                if (supplierName != null) {
-                    orderBoundary.createSuggestedOrder(username, suggestedItems, supplierName);
-                    System.out.println("Ordine suggerito creato con successo.");
+            System.out.println("\nOpzioni:");
+            System.out.println("1. Conferma ordine suggerito");
+            System.out.println("2. Modifica ordine suggerito");
+            System.out.println("3. Annulla");
+            System.out.print("Scegli un'opzione: ");
+
+            String choice = SCANNER.nextLine();
+
+            switch (choice) {
+                case "1" -> {
+                    // Conferma ordine suggerito (comportamento originale)
+                    String supplierName = selezionaFornitore(userBoundary.getUser(username));
+                    if (supplierName != null) {
+                        orderBoundary.createSuggestedOrder(username, suggestedItems, supplierName);
+                        System.out.println("Ordine suggerito creato con successo.");
+                    }
+                }
+                case "2" -> {
+                    // Modifica ordine suggerito (nuovo comportamento)
+                    List<OrderItemBean> modifiedItems = modificaOrdineSuggerito(suggestedItems);
+                    if (!modifiedItems.isEmpty()) {
+                        String supplierName = selezionaFornitore(userBoundary.getUser(username));
+                        if (supplierName != null) {
+                            orderBoundary.createSuggestedOrder(username, modifiedItems, supplierName);
+                            System.out.println("Ordine modificato creato con successo.");
+                        }
+                    } else {
+                        System.out.println("Nessun articolo nell'ordine. Ordine annullato.");
+                    }
+                }
+                case "3" -> System.out.println("Operazione annullata.");
+                default -> System.out.println("Opzione non valida.");
+            }
+        }
+    }
+
+
+    private static List<OrderItemBean> modificaOrdineSuggerito(List<OrderItemBean> suggestedItems) {
+        List<OrderItemBean> modifiedItems = new ArrayList<>();
+        List<PartBean> availableParts = inventoryBoundary.getAllParts();
+
+        System.out.println("\n--- MODIFICA ORDINE SUGGERITO ---");
+        System.out.println("Per ogni articolo, inserisci la nuova quantità (0 per rimuovere):");
+
+        for (OrderItemBean originalItem : suggestedItems) {
+            while (true) {
+                System.out.printf("Articolo: %s | Quantità suggerita: %d | Nuova quantità: ",
+                        originalItem.getPartName(), originalItem.getQuantity());
+
+                try {
+                    int newQty = Integer.parseInt(SCANNER.nextLine());
+
+                    if (newQty > 0) {
+                        // Verifica che la parte esista
+                        boolean partExists = availableParts.stream()
+                                .anyMatch(part -> part.getName().equals(originalItem.getPartName()));
+
+                        if (!partExists) {
+                            System.out.println("ATTENZIONE: La parte '" + originalItem.getPartName() + "' non esiste più nell'inventario. Articolo rimosso.");
+                            break;
+                        }
+
+                        OrderItemBean modifiedItem = new OrderItemBean();
+                        modifiedItem.setPartName(originalItem.getPartName());
+                        modifiedItem.setQuantity(newQty);
+                        modifiedItems.add(modifiedItem);
+                        break;
+                    } else if (newQty == 0) {
+                        System.out.println("Articolo rimosso dall'ordine.");
+                        break;
+                    } else {
+                        System.out.println("La quantità deve essere >= 0.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Quantità non valida. Inserisci un numero.");
                 }
             }
         }
+
+        // Possibilità di aggiungere nuovi articoli
+        System.out.println("\nVuoi aggiungere nuovi articoli all'ordine? (s/n): ");
+        if (SCANNER.nextLine().equalsIgnoreCase("s")) {
+            System.out.println("Parti disponibili nell'inventario:");
+            for (PartBean part : availableParts) {
+                System.out.println("  - " + part.getName());
+            }
+            System.out.println("Inserisci i nuovi articoli (nome vuoto per terminare):");
+
+            while (true) {
+                System.out.print("Nome parte: ");
+                String partName = SCANNER.nextLine().trim();
+                if (partName.isBlank()) break;
+
+                // Verifica che la parte esista
+                boolean partExists = availableParts.stream()
+                        .anyMatch(part -> part.getName().equals(partName));
+
+                if (!partExists) {
+                    System.out.println("ERRORE: La parte '" + partName + "' non esiste nell'inventario.");
+                    continue; // Riprova con un altro nome
+                }
+
+                System.out.print("Quantità: ");
+                try {
+                    int qty = Integer.parseInt(SCANNER.nextLine());
+                    if (qty > 0) {
+                        OrderItemBean newItem = new OrderItemBean();
+                        newItem.setPartName(partName);
+                        newItem.setQuantity(qty);
+                        modifiedItems.add(newItem);
+                        System.out.println("Articolo aggiunto: " + partName + " x " + qty);
+                    } else {
+                        System.out.println("La quantità deve essere > 0.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Quantità non valida.");
+                }
+            }
+        }
+
+        return modifiedItems;
     }
 
     private static void handleVisualizzaOrdini() {

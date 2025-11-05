@@ -7,4 +7,4 @@
 0|Fanale Posteriore|12|2
 8|Cinghia Distribuzione|6|4
 0|Liquido Freni|15|5
-0|Lampadina Faro|13|3
+0|Lampadina Faro|2|3
