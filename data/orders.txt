@@ -9,3 +9,5 @@ d398fe25|PartiVeloci|Delivered|null|Liquido Freni:13,Lampadina Faro:13
 7e43c0a6|MeccanicaPlus|Delivered|null|Lampadina Faro:10,Filtro Aria:1
 dfc75ccb|AutoRicambi S.p.A.|Delivered|null|Filtro Olio:10,Batteria Auto:10,Fanale Posteriore:10,Candele:10
 64481de2|AutoRicambi S.p.A.|Delivered|null|Candele:10,Batteria Auto:10
+fa67c1b4|AutoRicambi S.p.A.|Delivered|null|Lampadina Faro:11,Filtro Olio:10
+3d45dfb2|AutoRicambi S.p.A.|Delivered|null|Filtro Olio:41
