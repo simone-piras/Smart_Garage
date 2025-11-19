@@ -24,27 +24,27 @@ public class NotificationBoundary {
         this.notificationManager = sharedNotificationManager;
     }
 
-
+    //recupera tutte le notifiche
     public List<NotificationBean> getAllNotifications() {
         return notificationManager.getAllNotifications();
     }
 
     public List<OrderItemBean> getSuggestedOrderItems() {
-        List<NotificationBean> notifications = getAllNotifications();
+        List<NotificationBean> notifications = getAllNotifications();//recupera tutte le notifiche
         List<OrderItemBean> suggestedItems = new ArrayList<>();
         for (NotificationBean n : notifications) {
-            if (n.isHasSuggestedOrder()) {
-                OrderItemBean item = new OrderItemBean();
+            if (n.isHasSuggestedOrder()) { //filtra solo le notifiche con suggerimenti
+                OrderItemBean item = new OrderItemBean(); //trasforma notifica in OrderBean
                 item.setPartName(n.getPartName());
                 item.setQuantity(n.getSuggestedQuantity());
                 suggestedItems.add(item);
             }
         }
-        return suggestedItems;
+        return suggestedItems; //ritorna lista pronta per creare un ordine
     }
 
     public void addNotification(NotificationBean notificationBean){
         notificationBean.validate();
-        notificationManager.addNotification(notificationBean);
+        notificationManager.addNotification(notificationBean);//salva la notifica
     }
 }

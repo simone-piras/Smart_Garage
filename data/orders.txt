@@ -12,3 +12,4 @@ dfc75ccb|AutoRicambi S.p.A.|Delivered|null|Filtro Olio:10,Batteria Auto:10,Fanal
 fa67c1b4|AutoRicambi S.p.A.|Delivered|null|Lampadina Faro:11,Filtro Olio:10
 3d45dfb2|AutoRicambi S.p.A.|Delivered|null|Filtro Olio:41
 4067a1d1|AutoRicambi S.p.A.|Delivered|null|Candele:10,Batteria Auto:10,Lampadina Faro:11,Pastiglie Freno:4
+f98745da|AutoRicambi S.p.A.|Delivered|null|Lampadina Faro:34,Batteria Auto:21

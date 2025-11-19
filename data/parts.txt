@@ -3,8 +3,8 @@
 0|Pastiglie Freno|119|5
 0|Olio Motore|164|4
 0|Candele|13|3
-0|Batteria Auto|12|2
+0|Batteria Auto|33|2
 0|Fanale Posteriore|12|2
 8|Cinghia Distribuzione|6|4
 0|Liquido Freni|15|5
-0|Lampadina Faro|13|3
+0|Lampadina Faro|1|3

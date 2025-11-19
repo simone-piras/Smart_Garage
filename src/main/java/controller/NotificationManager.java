@@ -32,7 +32,7 @@ public class NotificationManager implements Observer {
     public void addNotification(NotificationBean notificationBean) {
         List<NotificationEntity> existing = notificationDAO.getAllNotifications();
         NotificationEntity entity = mapperFactory.toEntity(notificationBean, NotificationEntity.class);
-
+        //controllo duplicati per ordini
         if (notificationBean.getRelatedOrder() != null) {
             boolean orderExists = existing.stream()
                     .anyMatch(n -> n.getRelatedOrder() != null &&
@@ -42,6 +42,7 @@ public class NotificationManager implements Observer {
             if (!orderExists) {
                 notificationDAO.saveNotification(entity);
             }
+            //controllo duplicati per parti
         } else if (notificationBean.getPartName() != null) {
             boolean partExists = existing.stream()
                     .anyMatch(n -> n.getPartName() != null &&
@@ -51,6 +52,7 @@ public class NotificationManager implements Observer {
             if (!partExists) {
                 notificationDAO.saveNotification(entity);
             }
+            //controllo dupllicati generici
         } else {
             boolean genericExists = existing.stream()
                     .anyMatch(n -> n.getMessage().equals(notificationBean.getMessage()) &&
@@ -72,6 +74,7 @@ public class NotificationManager implements Observer {
         notificationDAO.clearNotifications();
     }
 
+    //rimuove notifiche specifiche per una parte,usato quando le scorte tornano sopra soglia
     public void removeNotificationsByPartName(String partName) {
         List<NotificationEntity> allNotifications = notificationDAO.getAllNotifications();
         for (NotificationEntity n : new ArrayList<>(allNotifications)) {

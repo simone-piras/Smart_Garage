@@ -18,14 +18,14 @@ public class SupplierBoundary {
     public boolean setDefaultSupplier(String username, String supplierName) {
         UserBean user = userManager.getUser(username);
         if (user == null) return false;
-        userManager.setDefaultSupplier(username, supplierName);
-        user.setDefaultSupplierName(supplierName);
+        userManager.setDefaultSupplier(username, supplierName); //salva fornitore predefinito
+        user.setDefaultSupplierName(supplierName); //aggiorna oggetto in memoria
         return true;
     }
 
 
     public void addSupplier(String name, String email, String phone) {
-        SupplierBean supplier = new SupplierBean();
+        SupplierBean supplier = new SupplierBean(); //crea oggetto supplier
         supplier.setName(name);
         supplier.setEmail(email);
         supplier.setPhone(phone);

@@ -154,7 +154,7 @@ public class InventoryManager implements Subject {
             notification.setSuggestedQuantity((part.getReorderThreshold() + 10) - part.getQuantity());
             notifyObserver(notification); //NOTIFICA TUTTI GLI OBSERVER
         } else {
-            notificationManager.removeNotificationsByPartName(part.getName());
+            notificationManager.removeNotificationsByPartName(part.getName());//se sopra soglia rimuove le notifiche esitenti per tale parte dalle notifiche
         }
     }
 }

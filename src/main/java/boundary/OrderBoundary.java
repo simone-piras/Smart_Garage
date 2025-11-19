@@ -21,30 +21,30 @@ public class OrderBoundary {
 
     //Crea un ordine manuale
     public OrderBean createOrder(String username, String supplierName, List<OrderItemBean> items) {
-        OrderBean order = new OrderBean();
+        OrderBean order = new OrderBean();//crea l'oggetto ordine
         order.setOrderID(generateOrderID());
         order.setSupplierName(supplierName);
         order.setStatus(OrderStatus.CREATING);
-        order.setItems(items);
+        order.setItems(items);//lista articoli ordinati
 
         order.validate();
 
-        orderManager.createOrder(order);
+        orderManager.createOrder(order);//salva ordine
 
-        //NOTIFICA CONFERMA ORDINE CON RIEPILOGO
+        //CREA NOTIFICA CONFERMA ORDINE CON RIEPILOGO
         String confirmationMsg = "Ordine #" + order.getOrderID() + " confermato il " +
                 java.time.LocalDate.now().toString() +
                 "\nFornitore: " + supplierName;
         NotificationBean confirmationNotif = new NotificationBean(
                 confirmationMsg,
-                order,
+                order, //collega notifica all'ordine
                 java.time.LocalDate.now().toString(),
                 null
         );
         notificationBoundary.addNotification(confirmationNotif);
 
         new OrderProcessorThread(order).start();
-        return order;
+        return order;//ritorna ordine creato
     }
 
     //Crea un ordine dai suggerimenti delle notifiche usando il fornitore scelto
@@ -67,7 +67,7 @@ public class OrderBoundary {
                 .map(s -> s.getName())
                 .toList();
     }
-
+    //crea UUID univoco prendendo solo i primi 8 caratteri
     private String generateOrderID() {
         return UUID.randomUUID().toString().substring(0, 8);
     }

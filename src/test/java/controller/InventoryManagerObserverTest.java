@@ -59,7 +59,7 @@ class InventoryManagerObserverTest {
         inventoryDAO = ApplicationContext.getInstance().getDAOFactory().getInventoryDAO();
         testObserver = new TestObserver();
 
-
+        //injection forzata delDAO tramite reflection, usa inMemory per i test
         Field daoField = InventoryManager.class.getDeclaredField("inventoryDAO");
         daoField.setAccessible(true);
         daoField.set(inventoryManager, inventoryDAO);
@@ -69,7 +69,7 @@ class InventoryManagerObserverTest {
     }
 
     @AfterEach
-    void tearDown() {
+    void tearDown() { //pulizia automatica, rimuove tutte le parti create durante i test
 
         for (String partName : createdPartNames) {
             inventoryDAO.removePart(partName);
@@ -90,7 +90,7 @@ class InventoryManagerObserverTest {
         inventoryManager.addPart(partBean);
         createdPartNames.add("Filtro Aria");
 
-
+        //verifica contenuto notifica
         assertEquals(1, testObserver.getNotificationCount(),
                 "L'Observer dovrebbe ricevere una notifica per scorte basse");
 

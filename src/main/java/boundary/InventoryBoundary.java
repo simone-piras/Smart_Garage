@@ -31,27 +31,28 @@ public class InventoryBoundary {
         this.notificationManager = sharedNotificationManager;
     }
 
-
+    //ritorna una lista di PartBean per essere visualizzati nella UI
     public List<PartBean> getAllParts() {
         return inventoryManager.getAllParts();
     }
 
     public boolean updatePartQuantity(String partName, int delta) throws InsufficientStockException, PartNotFoundException {
         boolean success;
-        if (delta < 0) {
+        if (delta < 0) { //usando parti
             success = inventoryManager.usePart(partName, -delta);
-        } else {
+        } else { //aggiungendo parti
             success = inventoryManager.addQuantityToPart(partName, delta);
         }
         return success;
     }
 
     public void addOrUpdatePart(String name, int quantity, int reorderThreshold) {
+        //trasforma i parametri in un oggetto PartBean
         PartBean part = new PartBean();
         part.setName(name);
         part.setQuantity(quantity);
         part.setReorderThreshold(reorderThreshold);
         part.validate();
-        inventoryManager.addOrUpdatePart(part);
+        inventoryManager.addOrUpdatePart(part); //salva o aggiorna la parte, serve per aggiungere una nuova parte
     }
 }
