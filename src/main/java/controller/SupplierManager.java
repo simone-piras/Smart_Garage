@@ -7,7 +7,7 @@ import mapper.BeanEntityMapperFactory;
 import utils.ApplicationContext;
 
 import java.util.List;
-import java.util.Optional;
+
 
 public class SupplierManager {
     private final SupplierDAO supplierDAO;
@@ -20,11 +20,6 @@ public class SupplierManager {
     public void addSupplier(SupplierBean supplierBean) {
         SupplierEntity entity = mapperFactory.toEntity(supplierBean, SupplierEntity.class);
         supplierDAO.saveSupplier(entity);
-    }
-
-    public Optional<SupplierBean> getSupplierByName(String name) {
-        return supplierDAO.getSupplierByName(name)
-                .map(entity -> mapperFactory.toBean(entity, SupplierBean.class));
     }
 
     public List<SupplierBean> getAllSuppliers() {

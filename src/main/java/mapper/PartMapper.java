@@ -19,8 +19,6 @@ public class PartMapper implements BeanEntityMapper<PartBean, PartEntity> {
     @Override
     public PartEntity toEntity(PartBean bean) {
         if (bean == null) return null;
-
-        // ✅ Costruttore senza ID: (name, quantity, reorderThreshold)
         return new PartEntity(bean.getName(), bean.getQuantity(), bean.getReorderThreshold());
     }
 }

@@ -126,7 +126,7 @@ public class InventoryViewController implements Observer {
         }
     }
 
-    // === OBSERVER ===
+    // OBSERVER
     @Override
     public void update(NotificationBean notification) {
         if (notification == null) return;
@@ -149,7 +149,7 @@ public class InventoryViewController implements Observer {
         });
     }
 
-    // === MENU LATERALE ===
+    // MENU LATERALE
     @FXML private void goToHome(ActionEvent event) { loadView("/fxml/GarageHomeView.fxml", event); }
     @FXML private void goToInventory(ActionEvent event) { /* già qui */ }
     @FXML private void goToOrder(ActionEvent event) { loadOrderViewWithParams(event, new ArrayList<>(notificationManager.getAllNotifications()), false); }
@@ -165,12 +165,12 @@ public class InventoryViewController implements Observer {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    // === HEADER ===
+    // HEADER
     @FXML private void goBack(ActionEvent event) { loadView("/fxml/GarageHomeView.fxml", event); }
     @FXML private void handleClose(ActionEvent event) { Platform.exit(); }
     @FXML private void toggleSideMenu() { sideMenu.setVisible(!sideMenu.isVisible()); }
 
-    // === UTIL ===
+    // UTIL
     private void loadView(String fxmlPath, ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));

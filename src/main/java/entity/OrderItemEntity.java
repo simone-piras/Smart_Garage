@@ -8,12 +8,12 @@ public class OrderItemEntity {
     private int quantity;
     private BigDecimal unitPrice;
 
-    // Costruttore senza ID
+    // Costruttore senza ID per nuovo item d'ordine, quando si aggiunge un item a un ordine nuovo
     public OrderItemEntity(PartEntity part, int quantity, BigDecimal unitPrice) {
         this(0, part, quantity, unitPrice);
     }
 
-    // Costruttore con ID
+    // Costruttore con ID: item già esistente usato quando si carica un ordine completo con i suiu items
     public OrderItemEntity(int id, PartEntity part, int quantity, BigDecimal unitPrice) {
         this.id = id;
         this.part = part;

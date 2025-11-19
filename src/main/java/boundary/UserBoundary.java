@@ -28,7 +28,7 @@ public class UserBoundary {
         UserBean userBean = new UserBean();
         userBean.setUsername(username);
         userBean.setEmail(email);
-        userBean.setPassword("google_oauth"); // Password fittizia per Google
+        userBean.setPassword("google_oauth"); //Password fittizia per Google
         userBean.validate();
         userManager.registerGoogleUser(userBean);
     }

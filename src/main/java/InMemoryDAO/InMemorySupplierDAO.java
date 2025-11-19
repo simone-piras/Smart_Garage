@@ -11,7 +11,6 @@ public class InMemorySupplierDAO implements SupplierDAO {
     @Override
     public void saveSupplier(SupplierEntity supplier) {
         if (supplier.getId() == 0) {
-            // ✅ Costruttore corretto: (id, name, email, phoneNumber, isDefault)
             SupplierEntity newSupplier = new SupplierEntity(nextId++, supplier.getName(),
                     supplier.getEmail(), supplier.getPhoneNumber(), supplier.isDefault());
             suppliers.add(newSupplier);

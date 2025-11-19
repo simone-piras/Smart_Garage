@@ -13,7 +13,7 @@ public class OrderMapper implements BeanEntityMapper<OrderBean, OrderEntity> {
         if (entity == null) return null;
 
         OrderBean bean = new OrderBean();
-        bean.setOrderID(entity.getId()); // ✅ Usa getId() direttamente (ora è String)
+        bean.setOrderID(entity.getId());
 
         if (entity.getStatus() != null) {
             try {
@@ -57,7 +57,6 @@ public class OrderMapper implements BeanEntityMapper<OrderBean, OrderEntity> {
                 null
         );
 
-        // ✅ Imposta ID direttamente come String (non serve più parsing)
         if (bean.getOrderID() != null && !bean.getOrderID().isEmpty()) {
             orderEntity.setId(bean.getOrderID());
         }

@@ -22,21 +22,30 @@ public class InventoryManager implements Subject {
     private final NotificationManager notificationManager;
     private final BeanEntityMapperFactory mapperFactory = BeanEntityMapperFactory.getInstance();
 
+    /*
+    Costruttore di default per CLI, crea autonomamente le sue dipendenze e configura
+    Observer pattern
+     */
     public InventoryManager() {
         this.inventoryDAO = ApplicationContext.getInstance().getDAOFactory().getInventoryDAO();
         this.notificationManager = new NotificationManager();
-        // ✅ REGISTRA NotificationManager COME OBSERVER
+        //REGISTRA NotificationManager COME OBSERVER
         this.addObserver(notificationManager);
     }
 
+    /*
+    Costruttore con dipendenze, accetta un NotificationManager già configurato dall'esterno, è necessario perchè garantisce
+    la condivisione della stessa NotificationManager tra tutti i componenti dell'applicazione, così che tutti vedano le stesse notifiche
+     */
     public InventoryManager(NotificationManager notificationManager) {
+        //Binding dinamico, polimorfismo: a runtime viene scelto il DAO relativo alla persistenza scelta nella sessione
         this.inventoryDAO = ApplicationContext.getInstance().getDAOFactory().getInventoryDAO();
         this.notificationManager = notificationManager;
-        // ✅ REGISTRA NotificationManager COME OBSERVER
+        //REGISTRA NotificationManager COME OBSERVER
         this.addObserver(notificationManager);
     }
 
-    // ✅ OBSERVER PATTERN - INVARIATO
+    //OBSERVER PATTERN
     @Override
     public void addObserver(Observer observer) {
         observers.add(observer);
@@ -54,14 +63,13 @@ public class InventoryManager implements Subject {
         }
     }
 
-    // 🔄 METODI CON MAPPER - RIMOSSE CHIAMATE A refreshLowStockNotifications
+    // METODI CON MAPPER
     public void addPart(PartBean partBean) {
         PartEntity entity = mapperFactory.toEntity(partBean, PartEntity.class);
         inventoryDAO.savePart(entity);
 
         PartBean savedPart = mapperFactory.toBean(entity, PartBean.class);
         checkThreshold(savedPart);
-        // ❌ RIMOSSO: notificationManager.refreshLowStockNotifications();
     }
 
     public void updatePart(PartBean partBean) {
@@ -70,7 +78,6 @@ public class InventoryManager implements Subject {
 
         PartBean updatedPart = mapperFactory.toBean(entity, PartBean.class);
         checkThreshold(updatedPart);
-        // ❌ RIMOSSO: notificationManager.refreshLowStockNotifications();
     }
 
     public boolean usePart(String partName, int quantityUsed) throws InsufficientStockException, PartNotFoundException {
@@ -86,9 +93,7 @@ public class InventoryManager implements Subject {
         PartBean updated = new PartBean(part.getName(), part.getQuantity() - quantityUsed, part.getReorderThreshold());
         PartEntity updatedEntity = mapperFactory.toEntity(updated, PartEntity.class);
         inventoryDAO.updatePart(updatedEntity);
-
         checkThreshold(updated);
-        // ❌ RIMOSSO: notificationManager.refreshLowStockNotifications();
         return true;
     }
 
@@ -126,7 +131,6 @@ public class InventoryManager implements Subject {
 
             inventoryDAO.updatePart(updatedEntity);
             checkThreshold(updated);
-            // ❌ RIMOSSO: notificationManager.refreshLowStockNotifications();
             return true;
         }
         return false;
@@ -138,7 +142,6 @@ public class InventoryManager implements Subject {
 
         PartBean savedPart = mapperFactory.toBean(entity, PartBean.class);
         checkThreshold(savedPart);
-        // ❌ RIMOSSO: notificationManager.refreshLowStockNotifications();
         return true;
     }
 
@@ -149,8 +152,7 @@ public class InventoryManager implements Subject {
                     LocalDate.now().toString(), part.getName());
             notification.setHasSuggestedOrder(true);
             notification.setSuggestedQuantity((part.getReorderThreshold() + 10) - part.getQuantity());
-            notifyObserver(notification); // ✅ NOTIFICA TUTTI GLI OBSERVER (INCLUSA NOTIFICATIONMANAGER)
-            // ❌ RIMOSSO: notificationManager.addNotification(notification);
+            notifyObserver(notification); //NOTIFICA TUTTI GLI OBSERVER
         } else {
             notificationManager.removeNotificationsByPartName(part.getName());
         }

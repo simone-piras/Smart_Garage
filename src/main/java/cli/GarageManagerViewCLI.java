@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class GarageManagerViewCLI {
+    //Singleton delle boundary per tutta la CLI, ogni boundary usa il costruttore senza parametri che si appoggia a SHaredManagers
     private static final InventoryBoundary inventoryBoundary = new InventoryBoundary();
     private static final NotificationBoundary notificationBoundary = new NotificationBoundary();
     private static final OrderBoundary orderBoundary = new OrderBoundary();

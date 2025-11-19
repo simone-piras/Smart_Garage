@@ -11,7 +11,6 @@ public class InMemoryUserDAO implements UserDAO {
     @Override
     public void saveUser(UserEntity user) {
         if (user.getId() == 0) {
-            // ✅ Costruttore corretto: (id, username, email, password, defaultSupplier)
             UserEntity newUser = new UserEntity(nextId++, user.getUsername(), user.getEmail(),
                     user.getPassword(), user.getDefaultSupplierName());
             userStorage.put(newUser.getUsername(), newUser);
@@ -40,7 +39,6 @@ public class InMemoryUserDAO implements UserDAO {
     public void updateDefaultSupplier(String username, String supplierName) {
         UserEntity user = userStorage.get(username);
         if (user != null) {
-            // ✅ Costruttore corretto
             UserEntity updated = new UserEntity(user.getId(), user.getUsername(), user.getEmail(),
                     user.getPassword(), supplierName);
             userStorage.put(username, updated);

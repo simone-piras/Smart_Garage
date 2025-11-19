@@ -12,6 +12,13 @@ import controller.OrderManager;
 import java.util.Optional;
 
 public class OrderProcessorThread extends Thread {
+    /*
+    Ho scelto di dividere la logica in modo tale che al controller non venissero attribuite troppe responsabilità, in modo tale che
+    il controller si occupi solo dlla creazione e gestione iniziale dell'ordine, mentre l?orderProcessorThread si occupa del processamento
+    asincrono e della gestione stati (divide-et-impera), poichè se avessi messo tutto nel controller vi era il rischio che una volta effetuato l'ordine,
+    ò'utente sarebbe rimasto bloccato sulla stessa UI per un tempo troppo prolungato, d in una applicazione reale l'utente deve poter conyinuare a navigare
+    nel mentre che l'ordine viene processato.
+     */
 
     private final OrderBean order;
     private final OrderManager orderManager;
@@ -21,7 +28,7 @@ public class OrderProcessorThread extends Thread {
     public OrderProcessorThread(OrderBean order) {
         this.order = order;
         this.orderManager = new OrderManager();
-        this.inventoryManager = SharedManagers.getInstance().getInventoryManager(); // ✅ MODIFICATO
+        this.inventoryManager = SharedManagers.getInstance().getInventoryManager();
         this.notificationBoundary = new NotificationBoundary(SharedManagers.getInstance().getNotificationManager());
     }
 
@@ -60,7 +67,7 @@ public class OrderProcessorThread extends Thread {
                     inventoryManager.addQuantityToPart(item.getPartName(), item.getQuantity());
                 }
 
-                // 🔹 Costruisci il riepilogo dettagliato
+                //Costruisci il riepilogo dettagliato
                 StringBuilder riepilogo = new StringBuilder();
                 int totaleArticoli = 0;
 
@@ -71,7 +78,7 @@ public class OrderProcessorThread extends Thread {
                     totaleArticoli += item.getQuantity();
                 }
 
-                // 🔹 NOTIFICA CONSEGNA ORDINE CON RIEPILOGO DETTAGLIATO
+                //NOTIFICA CONSEGNA ORDINE CON RIEPILOGO DETTAGLIATO
                 String deliveryMsg = "ORDINE CONSEGNATO #" + deliveredOrder.getOrderID() +
                         "\nData consegna: " +
                         java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) +
@@ -87,14 +94,6 @@ public class OrderProcessorThread extends Thread {
                         null // Nessuna parte specifica
                 );
                 notificationBoundary.addNotification(deliveryNotif);
-
-                // ✅ MODIFICA: LE NOTIFICHE SCORTE BASSE SI CREANO AUTOMATICAMENTE
-                // QUANDO inventoryManager.addQuantityToPart() CHIAMA checkThreshold()
-                // → notifyObserver() → NotificationManager.update()
-                // → addNotification() → SALVA NEL DB
-
-                // ❌ ELIMINATO: notificationBoundary.refreshLowStockNotificationsForPart(item.getPartName());
-                // ❌ ELIMINATO: new NotificationController(SharedManagers.getNotificationManager()).refreshLowStockNotifications();
             }
 
         } catch (InterruptedException e) {

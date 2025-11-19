@@ -326,7 +326,7 @@ public class OrderViewController {
 
     }
 
-    // === NAVIGAZIONE ===
+    // NAVIGAZIONE
     private void loadView(String fxmlPath, ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));

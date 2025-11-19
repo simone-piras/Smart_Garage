@@ -7,12 +7,12 @@ public class UserEntity {
     private String password;
     private String defaultSupplierName;
 
-    // Costruttore senza ID
+    // Costruttore senza ID per nuovi utenti
     public UserEntity(String username, String email, String password, String defaultSupplierName) {
         this(0, username, email, password, defaultSupplierName);
     }
 
-    // Costruttore con ID
+    // Costruttore con ID per utenti già esistenti
     public UserEntity(int id, String username, String email, String password, String defaultSupplierName) {
         this.id = id;
         this.username = username;

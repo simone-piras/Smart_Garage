@@ -11,7 +11,6 @@ public class InMemoryNotificationDAO implements NotificationDAO {
     @Override
     public void saveNotification(NotificationEntity notification) {
         if (notification.getId() == 0) {
-            // ✅ Costruttore corretto con ID: (id, message, date, partName, hasSuggestedOrder, suggestedQuantity, relatedOrder)
             NotificationEntity newNotif = new NotificationEntity(nextId++, notification.getMessage(),
                     notification.getDate(), notification.getPartName(), notification.isHasSuggestedOrder(),
                     notification.getSuggestedQuantity(), notification.getRelatedOrder());

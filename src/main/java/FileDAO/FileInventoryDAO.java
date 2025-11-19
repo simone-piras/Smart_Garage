@@ -14,14 +14,14 @@ public class FileInventoryDAO implements InventoryDAO {
     public void savePart(PartEntity part) {
         List<PartEntity> allParts = getAllParts();
 
-        // ✅ Trova il prossimo ID disponibile
+        //Trova il prossimo ID disponibile
         if (allParts.isEmpty()) {
             nextId = 1;
         } else {
             nextId = allParts.stream().mapToInt(PartEntity::getId).max().orElse(0) + 1;
         }
 
-        // ✅ Se la parte non ha ID, gliene assegno uno
+        //Se la parte non ha ID, gliene assegno uno
         if (part.getId() == 0) {
             part.setId(nextId);
         }
@@ -65,7 +65,7 @@ public class FileInventoryDAO implements InventoryDAO {
         List<PartEntity> parts = new ArrayList<>();
         File file = new File(FILE_PATH);
 
-        // ✅ Se il file non esiste, ritorna lista vuota
+        //Se il file non esiste, ritorna lista vuota
         if (!file.exists()) {
             return parts;
         }
@@ -106,7 +106,7 @@ public class FileInventoryDAO implements InventoryDAO {
     private PartEntity parsePart(String line) {
         try {
             String[] parts = line.split("\\|");
-            // ✅ CONTROLLA se ci sono almeno 4 parti (id|name|quantity|threshold)
+            //CONTROLLA se ci sono almeno 4 parti (id|name|quantity|threshold)
             if (parts.length >= 4) {
                 int id = Integer.parseInt(parts[0]);
                 String name = parts[1];
@@ -114,12 +114,12 @@ public class FileInventoryDAO implements InventoryDAO {
                 int threshold = Integer.parseInt(parts[3]);
                 return new PartEntity(id, name, quantity, threshold);
             }
-            // ✅ SE MANCA L'ID (formato vecchio: name|quantity|threshold)
+            // SE MANCA L'ID
             else if (parts.length == 3) {
                 String name = parts[0];
                 int quantity = Integer.parseInt(parts[1]);
                 int threshold = Integer.parseInt(parts[2]);
-                // ✅ Genera un ID temporaneo basato sull'hash del nome
+                //Genera un ID temporaneo basato sull'hash del nome
                 int tempId = Math.abs(name.hashCode());
                 return new PartEntity(tempId, name, quantity, threshold);
             } else {

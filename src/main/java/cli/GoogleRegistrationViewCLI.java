@@ -11,7 +11,7 @@ public class GoogleRegistrationViewCLI {
 
         try {
             GoogleLoginManager googleLoginManager = new GoogleLoginManager();
-            String email = googleLoginManager.getEmailFromGoogle(); //aggiunto exception a google login manager
+            String email = googleLoginManager.getEmailFromGoogle();
             String username = email.split("@")[0];
 
             userBoundary.registerGoogleUser(username, email);

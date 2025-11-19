@@ -14,14 +14,14 @@ public class FileSuppliersDAO implements SupplierDAO {
     public void saveSupplier(SupplierEntity supplier) {
         List<SupplierEntity> allSuppliers = getAllSuppliers();
 
-        // ✅ Trova il prossimo ID disponibile
+        //Trova il prossimo ID disponibile
         if (allSuppliers.isEmpty()) {
             nextId = 1;
         } else {
             nextId = allSuppliers.stream().mapToInt(SupplierEntity::getId).max().orElse(0) + 1;
         }
 
-        // ✅ Se il fornitore non ha ID, gliene assegno uno
+        //Se il fornitore non ha ID, gliene assegno uno
         if (supplier.getId() == 0) {
             supplier.setId(nextId);
         }
@@ -80,7 +80,7 @@ public class FileSuppliersDAO implements SupplierDAO {
     private SupplierEntity parseSupplier(String line) {
         try {
             String[] parts = line.split("\\|");
-            // ✅ CONTROLLA se ci sono almeno 5 parti (id|name|email|phone|isDefault)
+            //CONTROLLA se ci sono almeno 5 parti
             if (parts.length >= 5) {
                 int id = Integer.parseInt(parts[0]);
                 String name = parts[1];
@@ -89,13 +89,13 @@ public class FileSuppliersDAO implements SupplierDAO {
                 boolean isDefault = parts.length > 4 && Boolean.parseBoolean(parts[4]);
                 return new SupplierEntity(id, name, email, phone, isDefault);
             }
-            // ✅ SE MANCA L'ID (formato vecchio: name|email|phone|isDefault)
+            //SE MANCA L'ID
             else if (parts.length == 4) {
                 String name = parts[0];
                 String email = !parts[1].isEmpty() ? parts[1] : null;
                 String phone = !parts[2].isEmpty() ? parts[2] : null;
                 boolean isDefault = Boolean.parseBoolean(parts[3]);
-                // ✅ Genera un ID temporaneo basato sull'hash del nome
+                //Genera un ID temporaneo basato sull'hash del nome
                 int tempId = Math.abs(name.hashCode());
                 return new SupplierEntity(tempId, name, email, phone, isDefault);
             } else {

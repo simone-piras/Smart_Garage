@@ -27,7 +27,6 @@ public class NotificationMapper implements BeanEntityMapper<NotificationBean, No
     public NotificationEntity toEntity(NotificationBean bean) {
         if (bean == null) return null;
 
-        // ✅ Costruttore corretto: (message, date, partName, hasSuggestedOrder, suggestedQuantity, relatedOrder)
         NotificationEntity entity = new NotificationEntity(
                 bean.getMessage(),
                 bean.getDate(),

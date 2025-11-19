@@ -14,14 +14,14 @@ public class FileNotificationDAO implements NotificationDAO {
     public void saveNotification(NotificationEntity n) {
         List<NotificationEntity> allNotifications = getAllNotifications();
 
-        // ✅ Trova il prossimo ID disponibile
+        //Trova il prossimo ID disponibile
         if (allNotifications.isEmpty()) {
             nextId = 1;
         } else {
             nextId = allNotifications.stream().mapToInt(NotificationEntity::getId).max().orElse(0) + 1;
         }
 
-        // ✅ Se la notifica non ha ID, gliene assegno uno
+        //Se la notifica non ha ID, gliene assegno uno
         if (n.getId() == 0) {
             n.setId(nextId);
         }
@@ -85,7 +85,7 @@ public class FileNotificationDAO implements NotificationDAO {
     private NotificationEntity parseNotification(String line) {
         try {
             String[] parts = line.split("(?<!\\\\)\\|");
-            // ✅ CONTROLLA se ci sono almeno 6 parti
+            //CONTROLLA se ci sono almeno 6 parti
             if (parts.length >= 6) {
                 int id = Integer.parseInt(parts[0]);
                 String message = parts[1].replace("@@@NEWLINE@@@", "\n").replace("\\|", "|");
@@ -97,14 +97,14 @@ public class FileNotificationDAO implements NotificationDAO {
                 return new NotificationEntity(id, message, date, partName,
                         hasSuggestedOrder, suggestedQuantity, null);
             }
-            // ✅ SE MANCA L'ID (formato vecchio: message|partName|date|hasSuggestedOrder|suggestedQuantity)
+            //SE MANCA L'ID
             else if (parts.length == 5) {
                 String message = parts[0].replace("@@@NEWLINE@@@", "\n").replace("\\|", "|");
                 String partName = parts[1].equals("null") ? null : parts[1];
                 String date = parts[2];
                 boolean hasSuggestedOrder = Boolean.parseBoolean(parts[3]);
                 int suggestedQuantity = Integer.parseInt(parts[4]);
-                // ✅ Genera un ID temporaneo basato sull'hash del messaggio
+                //Genera un ID temporaneo basato sull'hash del messaggio
                 int tempId = Math.abs(message.hashCode());
 
                 return new NotificationEntity(tempId, message, date, partName,

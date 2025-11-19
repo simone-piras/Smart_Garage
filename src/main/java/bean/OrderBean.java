@@ -62,7 +62,7 @@ public class OrderBean {
         b.setOrderID(e.getOrderID());
         b.setSupplierName(e.getSupplierName());
 
-        // ✅ CORREZIONE: Conversione String → OrderStatus
+
         if (e.getStatus() != null) {
             try {
                 // Converte "In process" → "IN_PROCESS" → OrderStatus.IN_PROCESS

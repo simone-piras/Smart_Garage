@@ -2,12 +2,10 @@ package utils;
 
 import bean.NotificationBean;
 import bean.PartBean;
-import bean.SupplierBean;
 import boundary.InventoryBoundary;
 import boundary.SupplierBoundary;
 import boundary.UserBoundary;
 import controller.NotificationManager;
-import controller.UserManager;
 import controller.InventoryManager; // ✅ AGGIUNTO
 import exception.DuplicateUsernameException;
 
@@ -19,18 +17,18 @@ public class FileDataLoader {
     private final SupplierBoundary supplierBoundary;
     private final UserBoundary userBoundary;
     private final NotificationManager notificationManager;
-    private final InventoryManager inventoryManager; // AGGIUNTO per controllo
+    private final InventoryManager inventoryManager;
 
     public FileDataLoader() {
         inventoryBoundary = new InventoryBoundary();
         supplierBoundary = new SupplierBoundary();
         userBoundary = new UserBoundary();
-        notificationManager = SharedManagers.getInstance().getNotificationManager(); // ✅ MODIFICATO
-        inventoryManager = SharedManagers.getInstance().getInventoryManager(); // ✅ MODIFICATO
+        notificationManager = SharedManagers.getInstance().getNotificationManager();
+        inventoryManager = SharedManagers.getInstance().getInventoryManager();
     }
 
     public void load() {
-        // USA MANAGER per controllare se ci sono parti (File persistence)
+        // USA controller per controllare se ci sono parti
         if(!inventoryManager.getAllParts().isEmpty()){
             System.out.println("Dati già caricati, skip...");
             return;

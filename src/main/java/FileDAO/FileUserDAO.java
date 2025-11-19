@@ -148,14 +148,13 @@ public class FileUserDAO implements UserDAO {
                 String email = parts[3];
                 String defaultSupplier = parts.length > 4 && !parts[4].isEmpty() ? parts[4] : null;
 
-                // ✅ Ordine corretto dei parametri
                 return new UserEntity(id, username, email, password, defaultSupplier);
             } else {
-                System.err.println("❌ Formato file utenti non valido: " + line);
+                System.err.println(" Formato file utenti non valido: " + line);
                 return null;
             }
         } catch (NumberFormatException e) {
-            System.err.println("❌ Errore parsing ID nel file utenti: " + line);
+            System.err.println(" Errore parsing ID nel file utenti: " + line);
             return null;
         }
     }

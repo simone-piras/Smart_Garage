@@ -27,10 +27,6 @@ public class OrderManager {
         orderDAO.updateOrder(entity);
     }
 
-    public boolean cancelOrder(String orderId) {
-        return orderDAO.deleteOrder(orderId);
-    }
-
     public Optional<OrderBean> getOrderById(String orderId) {
         return orderDAO.getOrderByID(orderId)
                 .map(entity -> mapperFactory.toBean(entity, OrderBean.class));

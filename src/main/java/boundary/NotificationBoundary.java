@@ -3,7 +3,7 @@ package boundary;
 import bean.NotificationBean;
 import bean.OrderItemBean;
 import controller.NotificationManager;
-import utils.SharedManagers;  // ✅ AGGIUNGI QUESTA IMPORT
+import utils.SharedManagers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,17 +11,20 @@ import java.util.List;
 public class NotificationBoundary {
     private final NotificationManager notificationManager;
 
-    // MODIFICATO
+    //costruttore CLI
     public NotificationBoundary(){
-        this.notificationManager = SharedManagers.getInstance().getNotificationManager();  // ✅ MODIFICATO
+        this.notificationManager = SharedManagers.getInstance().getNotificationManager();
     }
 
-    // RIMANE INVARIATO
+    /*
+    Costruttore GUI: dependency injection, permette di condividere la stessa istanza di NotificationManager tra diverse boundary
+    nella stessa sessione GUI
+     */
     public NotificationBoundary(NotificationManager sharedNotificationManager){
         this.notificationManager = sharedNotificationManager;
     }
 
-    // ✅ TUTTI I METODI RIMANGONO INVARIATI
+
     public List<NotificationBean> getAllNotifications() {
         return notificationManager.getAllNotifications();
     }
@@ -44,10 +47,4 @@ public class NotificationBoundary {
         notificationBean.validate();
         notificationManager.addNotification(notificationBean);
     }
-
-
-    // ❌ ELIMINATI - NON SERVONO PIÙ
-    // public void refreshLowStockNotificationsForPart(String partName) { ... }
-    // public void refreshLowStockNotifications() { ... }
-    // public void clearNotifications() { ... }
 }

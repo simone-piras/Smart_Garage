@@ -21,7 +21,6 @@ public class UserMapper implements BeanEntityMapper<UserBean, UserEntity> {
     public UserEntity toEntity(UserBean bean) {
         if (bean == null) return null;
 
-        // ✅ Costruttore senza ID: (username, email, password, defaultSupplierName)
         return new UserEntity(
                 bean.getUsername(),
                 bean.getEmail(),

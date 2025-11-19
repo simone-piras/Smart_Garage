@@ -86,29 +86,6 @@ class OrderManagerTest {
     }
 
     @Test
-    void testCancellaOrdine() {
-        OrderBean orderBean = createTestOrder("ORD003", "Fornitore TEST", OrderStatus.CREATING);
-        orderManager.createOrder(orderBean);
-        createdOrderIds.add("ORD003");
-
-        boolean deleteResult = orderManager.cancelOrder("ORD003");
-
-        assertTrue(deleteResult, "La cancellazione dovrebbe avere successo");
-
-        Optional<OrderBean> retrievedOrder = orderManager.getOrderById("ORD003");
-        assertFalse(retrievedOrder.isPresent(), "L'ordine dovrebbe essere stato cancellato");
-
-        createdOrderIds.remove("ORD003"); // Rimuovi dalla lista di pulizia
-    }
-
-    @Test
-    void testCancellaOrdineNonEsistente() {
-        boolean deleteResult = orderManager.cancelOrder("ORD_INESISTENTE");
-
-        assertFalse(deleteResult, "La cancellazione di ordine inesistente dovrebbe fallire");
-    }
-
-    @Test
     void testGetAllOrders() {
         OrderBean order1 = createTestOrder("ORD004", "Fornitore A", OrderStatus.CREATING);
         OrderBean order2 = createTestOrder("ORD005", "Fornitore B", OrderStatus.IN_PROCESS);

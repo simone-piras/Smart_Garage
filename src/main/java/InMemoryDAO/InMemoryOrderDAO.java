@@ -12,7 +12,7 @@ public class InMemoryOrderDAO implements OrderDAO {
     @Override
     public void saveOrder(OrderEntity order) {
         if (order.getId() == null || order.getId().isEmpty()) {
-            // ✅ Genera ID come stringa (simula UUID)
+            //Genera ID come stringa (simula UUID)
             String newId = "order_" + nextId.getAndIncrement();
             OrderEntity newOrder = new OrderEntity(newId, order.getSupplier(), order.getItems(),
                     order.getStatus(), order.getDate());
@@ -29,7 +29,7 @@ public class InMemoryOrderDAO implements OrderDAO {
     @Override
     public Optional<OrderEntity> getOrderByID(String orderID) {
         return orders.stream()
-                .filter(order -> order.getId().equals(orderID)) // ✅ Confronta String
+                .filter(order -> order.getId().equals(orderID)) //Confronta String
                 .findFirst();
     }
 
@@ -40,13 +40,13 @@ public class InMemoryOrderDAO implements OrderDAO {
 
     @Override
     public boolean deleteOrder(String orderID) {
-        return orders.removeIf(order -> order.getId().equals(orderID)); // ✅ Confronta String
+        return orders.removeIf(order -> order.getId().equals(orderID)); //Confronta String
     }
 
     @Override
     public void updateOrder(OrderEntity updatedOrder) {
         for (int i = 0; i < orders.size(); i++) {
-            if (orders.get(i).getId().equals(updatedOrder.getId())) { // ✅ Confronta String
+            if (orders.get(i).getId().equals(updatedOrder.getId())) { //Confronta String
                 orders.set(i, updatedOrder);
                 return;
             }

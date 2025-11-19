@@ -19,7 +19,7 @@ public class OrderBoundary {
     private final SupplierManager supplierManager = new SupplierManager();
     private final NotificationBoundary notificationBoundary = new NotificationBoundary(SharedManagers.getInstance().getNotificationManager());
 
-    /** Crea un ordine manuale */
+    //Crea un ordine manuale
     public OrderBean createOrder(String username, String supplierName, List<OrderItemBean> items) {
         OrderBean order = new OrderBean();
         order.setOrderID(generateOrderID());
@@ -31,26 +31,10 @@ public class OrderBoundary {
 
         orderManager.createOrder(order);
 
-        // 🔹 NOTIFICA CONFERMA ORDINE CON RIEPILOGO
+        //NOTIFICA CONFERMA ORDINE CON RIEPILOGO
         String confirmationMsg = "Ordine #" + order.getOrderID() + " confermato il " +
                 java.time.LocalDate.now().toString() +
                 "\nFornitore: " + supplierName;
-
-        /*// ✅ USA IL NUOVO METODO della boundary invece di creare NotificationBean direttamente
-        notificationBoundary.addNotification(
-                confirmationMsg,
-                order,                              // relatedOrder
-                java.time.LocalDate.now().toString(), // date
-                null                                // partName
-        );
-
-
-
-        new OrderProcessorThread(order).start();
-        return order;
-
-         */
-
         NotificationBean confirmationNotif = new NotificationBean(
                 confirmationMsg,
                 order,
@@ -63,7 +47,7 @@ public class OrderBoundary {
         return order;
     }
 
-    /** Crea un ordine dai suggerimenti delle notifiche usando il fornitore scelto */
+    //Crea un ordine dai suggerimenti delle notifiche usando il fornitore scelto
     public OrderBean createSuggestedOrder(String username, List<OrderItemBean> suggestedItems, String supplierName) {
         if (supplierName == null || supplierName.isBlank()) {
             return null;
@@ -71,12 +55,12 @@ public class OrderBoundary {
         return createOrder(username, supplierName, suggestedItems);
     }
 
-    /** Recupera tutti gli ordini */
+    //Recupera tutti gli ordini
     public List<OrderBean> getAllOrders() {
         return orderManager.getAllOrders();
     }
 
-    /** Recupera tutti i nomi dei fornitori */
+    //Recupera tutti i nomi dei fornitori
     public List<String> getSupplierNames() {
         return supplierManager.getAllSuppliers()
                 .stream()

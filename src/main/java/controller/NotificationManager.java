@@ -1,19 +1,17 @@
 package controller;
 
 import bean.NotificationBean;
-import bean.PartBean;
 import DAO.NotificationDAO;
 import entity.NotificationEntity;
 import mapper.BeanEntityMapperFactory;
 import observer.Observer;
 import utils.ApplicationContext;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-// ✅ IMPLEMENTA OBSERVER
+
+
 public class NotificationManager implements Observer {
     private final NotificationDAO notificationDAO;
     private final BeanEntityMapperFactory mapperFactory = BeanEntityMapperFactory.getInstance();
@@ -22,10 +20,9 @@ public class NotificationManager implements Observer {
         this.notificationDAO = ApplicationContext.getInstance().getDAOFactory().getNotificationDAO();
     }
 
-    // ✅ METODO OBSERVER - RICEVE NOTIFICHE DA InventoryManager
+    //METODO OBSERVER - RICEVE NOTIFICHE DA InventoryManager
     @Override
     public void update(NotificationBean notification) {
-        // ✅ QUESTO SOSTITUISCE I METODI refreshLowStockNotifications
         // Riceve la notifica già creata da InventoryManager e la salva
         if (notification.getPartName() != null && notification.isHasSuggestedOrder()) {
             addNotification(notification);
@@ -36,7 +33,6 @@ public class NotificationManager implements Observer {
         List<NotificationEntity> existing = notificationDAO.getAllNotifications();
         NotificationEntity entity = mapperFactory.toEntity(notificationBean, NotificationEntity.class);
 
-        // ✅ LOGICA BUSINESS - INVARIATA
         if (notificationBean.getRelatedOrder() != null) {
             boolean orderExists = existing.stream()
                     .anyMatch(n -> n.getRelatedOrder() != null &&
@@ -84,8 +80,4 @@ public class NotificationManager implements Observer {
             }
         }
     }
-
-    // ❌ ELIMINATI COMPLETAMENTE - NON SERVONO PIÙ
-    // public void refreshLowStockNotifications() { ... }
-    // public void refreshLowStockNotificationsForPart(String partName) { ... }
 }

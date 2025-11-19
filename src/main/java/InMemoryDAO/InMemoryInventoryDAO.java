@@ -11,7 +11,6 @@ public class InMemoryInventoryDAO implements InventoryDAO {
     @Override
     public void savePart(PartEntity part) {
         if (part.getId() == 0) {
-            // ✅ Costruttore corretto con ID
             PartEntity newPart = new PartEntity(nextId++, part.getName(), part.getQuantity(), part.getReorderThreshold());
             partStorage.put(newPart.getName(), newPart);
         } else {
@@ -42,7 +41,7 @@ public class InMemoryInventoryDAO implements InventoryDAO {
     public List<PartEntity> getPartsBelowThreshold() {
         List<PartEntity> lowStock = new ArrayList<>();
         for (PartEntity part : partStorage.values()) {
-            if (part.getQuantity() <= part.getReorderThreshold()) { // ✅ getReorderThreshold()
+            if (part.getQuantity() <= part.getReorderThreshold()) {
                 lowStock.add(part);
             }
         }

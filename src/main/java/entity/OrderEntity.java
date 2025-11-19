@@ -9,12 +9,12 @@ public class OrderEntity {
     private String status;
     private String date;
 
-    // Costruttore senza ID
+    // Costruttore senza ID per creare nuovi ordini
     public OrderEntity(SupplierEntity supplier, List<OrderItemEntity> items, String status, String date) {
         this(null, supplier, items, status, date);
     }
 
-    // Costruttore con ID
+    // Costruttore con ID per il recupero di ordini esistenti, con ID già assegnato
     public OrderEntity(String id, SupplierEntity supplier, List<OrderItemEntity> items, String status, String date) {
         this.id = id;
         this.supplier = supplier;

@@ -31,9 +31,8 @@ public class HomeViewController {
         loadView("/fxml/registrationView.fxml", event, "Registration - Smart Garage");
     }
 
-    /**
-     * Metodo riutilizzabile per cambiare scena.
-     */
+    //Metodo riutilizzabile per cambiare scena.
+
     private void loadView(String fxmlPath, ActionEvent event, String title) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));

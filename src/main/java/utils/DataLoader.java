@@ -3,7 +3,6 @@ package utils;
 import bean.NotificationBean;
 import bean.PartBean;
 import java.time.LocalDate;
-import bean.SupplierBean;
 import boundary.InventoryBoundary;
 import boundary.SupplierBoundary;
 import boundary.UserBoundary;
@@ -14,7 +13,7 @@ public class DataLoader {
     private final InventoryBoundary inventoryBoundary = new InventoryBoundary();
     private final SupplierBoundary supplierBoundary = new SupplierBoundary();
     private final UserBoundary userBoundary = new UserBoundary();
-    private final NotificationManager notificationManager = SharedManagers.getInstance().getNotificationManager(); // ✅ MODIFICATO
+    private final NotificationManager notificationManager = SharedManagers.getInstance().getNotificationManager();
 
     public void load() {
         loadParts();

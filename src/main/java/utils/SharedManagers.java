@@ -9,12 +9,12 @@ public class SharedManagers {
     private NotificationManager notificationManager;
     private InventoryManager inventoryManager;
 
-    // ✅ COSTRUTTORE PRIVATO - come ApplicationContext
+    //COSTRUTTORE PRIVATO
     private SharedManagers() {
         // Inizializzazione lazy - le istanze vengono create solo quando servono
     }
 
-    // ✅ METODO SINGLETON SYNCHRONIZED - come ApplicationContext
+    //METODO SINGLETON SYNCHRONIZED
     public static synchronized SharedManagers getInstance() {
         if (instance == null) {
             instance = new SharedManagers();
@@ -22,7 +22,7 @@ public class SharedManagers {
         return instance;
     }
 
-    // ✅ GETTER per NotificationManager
+
     public NotificationManager getNotificationManager() {
         if (notificationManager == null) {
             notificationManager = new NotificationManager();
@@ -30,7 +30,7 @@ public class SharedManagers {
         return notificationManager;
     }
 
-    // ✅ GETTER per InventoryManager
+
     public InventoryManager getInventoryManager() {
         if (inventoryManager == null) {
             inventoryManager = new InventoryManager(getNotificationManager());

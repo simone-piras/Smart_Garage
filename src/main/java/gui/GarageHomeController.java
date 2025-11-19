@@ -28,7 +28,7 @@ public class GarageHomeController {
     private NotificationManager notificationManager;
     private UserBoundary userBoundary;
 
-    // Metodo per inizializzare i dati dell'utente loggato
+    // Metodo per inizializzare i dati dell'utente loggato (dependency injection)
     public void initData(String username, InventoryManager inventoryManager, NotificationManager notificationManager) {
         this.loggedUsername = username;
         this.inventoryManager = inventoryManager;
@@ -36,16 +36,6 @@ public class GarageHomeController {
         this.userBoundary = new UserBoundary();
 
         userGreetingLabel.setText("HI " + username.toUpperCase());
-
-       /* ApplicationContext context = ApplicationContext.getInstance();
-        if (context.getPersistenceType() != PersistenceType.FILE) {
-            notificationManager.clearNotifications();
-            notificationManager.refreshLowStockNotifications();
-        }
-levate perche inutili
-        */
-
-
 
         // Recupero fornitore di default tramite boundary
         var user = userBoundary.getUser(username);
@@ -56,7 +46,7 @@ levate perche inutili
 
 
 
-    // === NAVIGAZIONE ===
+    // NAVIGAZIONE
     @FXML private void goToHome(ActionEvent event) { /* già nella home */ }
     @FXML private void goToInventory(ActionEvent event) { loadView("/fxml/inventoryView.fxml", event); }
     @FXML private void goToOrder(ActionEvent event) {
@@ -98,13 +88,13 @@ levate perche inutili
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    // === PULSANTE HAMBURGER ===
+    // PULSANTE HAMBURGER
     @FXML private void toggleSideMenu() { sideMenu.setVisible(!sideMenu.isVisible()); }
 
-    // === PULSANTE X ===
+    // PULSANTE X
     @FXML private void handleClose(ActionEvent event) { ((Stage)((Node)event.getSource()).getScene().getWindow()).close(); }
 
-    // === SET DEFAULT SUPPLIER ===
+    // SET DEFAULT SUPPLIER
     @FXML private void handleSetDefault1() { setDefaultSupplier("AutoRicambi S.p.A."); }
     @FXML private void handleSetDefault2() { setDefaultSupplier("MeccanicaPlus"); }
     @FXML private void handleSetDefault3() { setDefaultSupplier("Distribuzione Auto Srl"); }

@@ -5,7 +5,7 @@ import exception.InsufficientStockException;
 import exception.PartNotFoundException;
 import controller.InventoryManager;
 import controller.NotificationManager;
-import utils.SharedManagers;  // ✅ AGGIUNGI QUESTA IMPORT
+import utils.SharedManagers;
 
 import java.util.List;
 
@@ -13,19 +13,25 @@ public class InventoryBoundary {
     private final InventoryManager inventoryManager;
     private final NotificationManager notificationManager;
 
-    // CLI - MODIFICATO
+    /*
+    Costruttore CLI: Per applicazioni a riga di comando, usa Singleton Shared Managers per ottenere istanze condivise
+    Le applicazioni CLI non hanno un contesto di dependency injection, quindi usano un approccio service locator
+     */
     public InventoryBoundary(){
-        this.inventoryManager = SharedManagers.getInstance().getInventoryManager();        // ✅ MODIFICATO
-        this.notificationManager = SharedManagers.getInstance().getNotificationManager();  // ✅ MODIFICATO
+        this.inventoryManager = SharedManagers.getInstance().getInventoryManager();
+        this.notificationManager = SharedManagers.getInstance().getNotificationManager();
     }
 
-    // GUI - RIMANE INVARIATO
+    /*
+    Costruttore GUI: Per applicazioni con interfaccia grafica, usa la dependency injection-le dipendenze vengono fornite
+    dall'esterno, le GUI spesso hanno un lifecycle complesso e necessitano di istanze condivise tra diversi componenti
+     */
     public InventoryBoundary(InventoryManager sharedInventorymanager, NotificationManager sharedNotificationManager){
         this.inventoryManager = sharedInventorymanager;
         this.notificationManager = sharedNotificationManager;
     }
 
-    // ✅ TUTTI I METODI RIMANGONO INVARIATI
+
     public List<PartBean> getAllParts() {
         return inventoryManager.getAllParts();
     }

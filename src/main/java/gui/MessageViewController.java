@@ -53,18 +53,17 @@ public class MessageViewController implements Observer {
 
         List<NotificationBean> notifications = notificationBoundary.getAllNotifications();
 
-        // ✅ CORREGGI: Usa lo stesso filtro della CLI per file persistence
         List<NotificationBean> orderNotifications = new ArrayList<>();
         List<NotificationBean> stockNotifications = new ArrayList<>();
 
         for (NotificationBean n : notifications) {
-            // ✅ NOTIFICHE ORDINI: partName = null OPPURE messaggio contiene "Ordine"
+            //NOTIFICHE ORDINI: partName = null OPPURE messaggio contiene "Ordine"
             if (n.getPartName() == null ||
                     (n.getMessage() != null &&
                             (n.getMessage().contains("Ordine") || n.getMessage().contains("ORDINE CONSEGNATO")))) {
                 orderNotifications.add(n);
             }
-            // ✅ NOTIFICHE SCORTE: partName != null E messaggio contiene "Scorte basse"
+            //NOTIFICHE SCORTE: partName != null E messaggio contiene "Scorte basse"
             else if (n.getPartName() != null &&
                     n.getMessage() != null &&
                     n.getMessage().contains("Scorte basse")) {
@@ -72,7 +71,7 @@ public class MessageViewController implements Observer {
             }
         }
 
-        // --- NOTIFICHE ORDINI ---
+        // NOTIFICHE ORDINI
         if (!orderNotifications.isEmpty()) {
             Label orderTitle = new Label("NOTIFICHE ORDINI");
             orderTitle.setStyle("-fx-font-weight: bold; -fx-font-size: 16; -fx-text-fill: #0066cc;");
@@ -87,7 +86,7 @@ public class MessageViewController implements Observer {
             messagesBox.getChildren().add(new Label("")); // Spazio
         }
 
-        // --- NOTIFICHE SCORTE ---
+        // NOTIFICHE SCORTE
         if (!stockNotifications.isEmpty()) {
             Label stockTitle = new Label("NOTIFICHE SCORTE");
             stockTitle.setStyle("-fx-font-weight: bold; -fx-font-size: 16; -fx-text-fill: #cc0000;");
@@ -102,7 +101,7 @@ public class MessageViewController implements Observer {
             messagesBox.getChildren().add(new Label("")); // Spazio
         }
 
-        // --- ORDINE SUGGERITO ---
+        // ORDINE SUGGERITO
         List<OrderItemBean> suggestedOrder = notificationBoundary.getSuggestedOrderItems();
         if (!suggestedOrder.isEmpty()) {
             Label orderTitle = new Label("ORDINE SUGGERITO");
@@ -131,7 +130,7 @@ public class MessageViewController implements Observer {
             messagesBox.getChildren().add(buttonsBox);
         }
 
-        // --- MESSAGGIO VUOTO ---
+        // MESSAGGIO VUOTO
         if (notifications.isEmpty() && suggestedOrder.isEmpty()) {
             Label emptyLabel = new Label("Nessuna notifica presente");
             emptyLabel.setStyle("-fx-font-style: italic; -fx-text-fill: gray; -fx-padding: 20 0 0 0;");
@@ -166,7 +165,7 @@ public class MessageViewController implements Observer {
         Platform.runLater(this::refreshMessages);
     }
 
-    // === NAVIGAZIONE ===
+    // NAVIGAZIONE
     @FXML private void goToHome(ActionEvent event) { loadView("/fxml/GarageHomeView.fxml", event); }
     @FXML private void goToInventory(ActionEvent event) { loadView("/fxml/InventoryView.fxml", event); }
     @FXML private void goToOrder(ActionEvent event) { loadOrderViewWithParams(event, new ArrayList<>(notificationBoundary.getAllNotifications()), false); }

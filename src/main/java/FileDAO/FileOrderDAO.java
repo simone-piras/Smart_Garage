@@ -28,7 +28,7 @@ public class FileOrderDAO implements OrderDAO {
             String line;
             while ((line = reader.readLine()) != null) {
                 OrderEntity order = parseOrder(line);
-                if (order.getId().equals(orderID)) return Optional.of(order); // ✅ Confronta String direttamente
+                if (order.getId().equals(orderID)) return Optional.of(order); //Confronta String direttamente
             }
         } catch (IOException e) {
             throw new RuntimeException("Errore lettura ordine da file: " + e.getMessage(), e);
@@ -51,7 +51,7 @@ public class FileOrderDAO implements OrderDAO {
     @Override
     public boolean deleteOrder(String orderID) {
         List<OrderEntity> orders = getAllOrders();
-        boolean removed = orders.removeIf(o -> o.getId().equals(orderID)); // ✅ Confronta String direttamente
+        boolean removed = orders.removeIf(o -> o.getId().equals(orderID)); //Confronta String direttamente
         if (removed) rewriteAll(orders);
         return removed;
     }
@@ -60,7 +60,7 @@ public class FileOrderDAO implements OrderDAO {
     public void updateOrder(OrderEntity updatedOrder) {
         List<OrderEntity> orders = getAllOrders();
         for (int i = 0; i < orders.size(); i++) {
-            if (orders.get(i).getId().equals(updatedOrder.getId())) { // ✅ Confronta String
+            if (orders.get(i).getId().equals(updatedOrder.getId())) { //Confronta String
                 orders.set(i, updatedOrder);
                 rewriteAll(orders);
                 return;
@@ -86,7 +86,7 @@ public class FileOrderDAO implements OrderDAO {
 
     private OrderEntity parseOrder(String line) {
         String[] parts = line.split("\\|");
-        String id = parts[0]; // ✅ Ora è String
+        String id = parts[0];
         String supplierName = parts[1].isEmpty() ? null : parts[1];
         String status = parts[2];
         String date = parts[3];
@@ -115,7 +115,7 @@ public class FileOrderDAO implements OrderDAO {
             supplier = new SupplierEntity(supplierName, null, null, false);
         }
 
-        return new OrderEntity(id, supplier, items, status, date); // ✅ Ora usa String id
+        return new OrderEntity(id, supplier, items, status, date);
     }
 
     private void rewriteAll(List<OrderEntity> orders) {

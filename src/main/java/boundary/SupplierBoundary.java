@@ -23,14 +23,12 @@ public class SupplierBoundary {
         return true;
     }
 
-    // ✅ NUOVO METODO per aggiungere supplier con parametri semplici
+
     public void addSupplier(String name, String email, String phone) {
         SupplierBean supplier = new SupplierBean();
         supplier.setName(name);
         supplier.setEmail(email);
         supplier.setPhone(phone);
-
-        // ✅ AGGIUNGI validate()
         supplier.validate();
         supplierManager.addSupplier(supplier);
     }

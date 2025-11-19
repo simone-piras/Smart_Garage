@@ -9,13 +9,13 @@ public class NotificationEntity {
     private int suggestedQuantity;
     private OrderEntity relatedOrder;
 
-    // Costruttore senza ID
+    // Costruttore senza ID per la creazione di nuove notifiche , ID sarà generato automaticamente, passando 0 come parametro temporaneo
     public NotificationEntity(String message, String date, String partName,
                               boolean hasSuggestedOrder, int suggestedQuantity, OrderEntity relatedOrder) {
         this(0, message, date, partName, hasSuggestedOrder, suggestedQuantity, relatedOrder);
     }
 
-    // Costruttore con ID
+    // Costruttore con ID per il recupero di notifiche esistenti, con ID già assegnato quindinotifica già esistente
     public NotificationEntity(int id, String message, String date, String partName,
                               boolean hasSuggestedOrder, int suggestedQuantity, OrderEntity relatedOrder) {
         this.id = id;

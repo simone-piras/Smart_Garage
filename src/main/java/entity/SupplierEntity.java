@@ -7,12 +7,12 @@ public class SupplierEntity {
     private String phoneNumber;
     private boolean isDefault;
 
-    // Costruttore senza ID
+    // Costruttore senza ID per nuovi fornitori
     public SupplierEntity(String name, String email, String phoneNumber, boolean isDefault) {
         this(0, name, email, phoneNumber, isDefault);
     }
 
-    // Costruttore con ID
+    // Costruttore con ID per fornitori esistenti
     public SupplierEntity(int id, String name, String email, String phoneNumber, boolean isDefault) {
         this.id = id;
         this.name = name;

@@ -46,8 +46,9 @@ public class LoginViewController {
 
     @FXML
     private void handleLogin(ActionEvent event) {
-        NotificationManager sharedNotificationManager = SharedManagers.getInstance().getNotificationManager(); // ✅ MODIFICATO
-        InventoryManager sharedInventoryManager = SharedManagers.getInstance().getInventoryManager(); // ✅ MODIFICATO
+        //Singleton per istanze condivise
+        NotificationManager sharedNotificationManager = SharedManagers.getInstance().getNotificationManager();
+        InventoryManager sharedInventoryManager = SharedManagers.getInstance().getInventoryManager();
 
         String username = usernameField.getText();
         String password = passwordField.getText();
@@ -59,7 +60,7 @@ public class LoginViewController {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GarageHomeView.fxml"));
                 Parent root = loader.load();
-
+                //dependency injection, passo le istanze condivise al prossimo controller e si avranno le stesse istanze grazie a singleton tramite loadView
                 GarageHomeController controller = loader.getController();
                 controller.initData(username, sharedInventoryManager, sharedNotificationManager);
 
@@ -95,8 +96,8 @@ public class LoginViewController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GarageHomeView.fxml"));
             Parent root = loader.load();
 
-            NotificationManager sharedNotificationManager = SharedManagers.getInstance().getNotificationManager(); // ✅ MODIFICATO
-            InventoryManager sharedInventoryManager = SharedManagers.getInstance().getInventoryManager(); // ✅ MODIFICATO
+            NotificationManager sharedNotificationManager = SharedManagers.getInstance().getNotificationManager();
+            InventoryManager sharedInventoryManager = SharedManagers.getInstance().getInventoryManager();
 
             GarageHomeController controller = loader.getController();
             controller.initData(username, sharedInventoryManager, sharedNotificationManager);
