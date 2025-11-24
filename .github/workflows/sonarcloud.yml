@@ -29,7 +29,7 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Build and analyze
-        run: mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.2824:sonar \
+        run: mvn -B verify sonar:sonar \
              -Dsonar.projectKey=simone_piras \
              -Dsonar.organization=simone-piras \
              -Dsonar.host.url=https://sonarcloud.io \
