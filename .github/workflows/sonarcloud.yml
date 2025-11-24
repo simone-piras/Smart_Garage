@@ -32,7 +32,7 @@ jobs:
         run: |
           mvn -B clean verify
           mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar \
-            -Dsonar.projectKey=simone_piras \
+            -Dsonar.projectKey=Smart_Garage \
             -Dsonar.organization=simone-piras \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
