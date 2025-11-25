@@ -34,56 +34,64 @@ public class GoogleLoginManager {
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     private static final List<String> SCOPES = List.of("profile", "email");
 
-    public Credential authorize() throws Exception {
-        final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+    public Credential authorize() throws GoogleLoginException {
+        try {
+            final NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
 
-        InputStream in = GoogleLoginManager.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
-        if (in == null) {
-            throw new GoogleLoginException("File credentials.json non trovato");
+            InputStream in = GoogleLoginManager.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
+            if (in == null) {
+                throw new GoogleLoginException("File credentials.json non trovato");
+            }
+
+            GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+
+            FileDataStoreFactory dataStoreFactory = new FileDataStoreFactory(Paths.get("tokens").toFile());
+            GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+                    httpTransport, JSON_FACTORY, clientSecrets, SCOPES)
+                    .setDataStoreFactory(dataStoreFactory)
+                    .setAccessType("offline")
+                    .build();
+
+            String userId = "user_" + System.currentTimeMillis();
+            /*facendo così ogni volta viene salvato un nuovo token e dopo tanti login la cartella tokens si riempirà di credenziali inutilizzate
+            nel caso si volesse evitare ciò bisognerebbe distinguere se ci si vuole loggare con un nuovo account oppure no, se si allora si utilizza
+            System.currentTimeMillis, altrimenti si utilizzerà il token già salvato nella cartella
+             */
+
+            Credential credential = flow.loadCredential(userId);
+
+            // Verifica se il token è valido
+            if (credential == null || credential.getAccessToken() == null || !credential.refreshToken()) {
+
+                System.out.println("Token scaduto o revocato. Avvio nuovo login Google...");
+                credential = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize(userId);
+            }
+
+            return credential;
+        } catch (Exception e) {
+            throw new GoogleLoginException("Errore durante l'autorizzazione Google: " + e.getMessage(), e);
         }
-
-        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
-
-        FileDataStoreFactory dataStoreFactory = new FileDataStoreFactory(Paths.get("tokens").toFile());
-        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-                httpTransport, JSON_FACTORY, clientSecrets, SCOPES)
-                .setDataStoreFactory(dataStoreFactory)
-                .setAccessType("offline")
-                .build();
-
-        String userId = "user_" + System.currentTimeMillis();
-        /*facendo così ogni volta viene salvato un nuovo token e dopo tanti login la cartella tokens si riempirà di credenziali inutilizzate
-        nel caso si volesse evitare ciò bisognerebbe distinguere se ci si vuole loggare con un nuovo account oppure no, se si allora si utilizza
-        System.currentTimeMillis, altrimenti si utilizzerà il token già salvato nella cartella
-         */
-
-        Credential credential = flow.loadCredential(userId);
-
-        // Verifica se il token è valido
-        if (credential == null || credential.getAccessToken() == null || !credential.refreshToken()) {
-
-            System.out.println("Token scaduto o revocato. Avvio nuovo login Google...");
-            credential = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize(userId);
-        }
-
-        return credential;
     }
 
     // Metodo alternativo per ottenere l'email tramite chiamata HTTP
-    public String getEmailFromGoogle() throws Exception {
-        Credential credential = authorize();
+    public String getEmailFromGoogle() throws GoogleLoginException {
+        try {
+            Credential credential = authorize();
 
-        HttpRequestFactory requestFactory = GoogleNetHttpTransport.newTrustedTransport()
-                .createRequestFactory(credential);
+            HttpRequestFactory requestFactory = GoogleNetHttpTransport.newTrustedTransport()
+                    .createRequestFactory(credential);
 
-        HttpRequest request = requestFactory.buildGetRequest(
-                new GenericUrl("https://www.googleapis.com/oauth2/v2/userinfo"));
-        request.getHeaders().setAccept("application/json");
+            HttpRequest request = requestFactory.buildGetRequest(
+                    new GenericUrl("https://www.googleapis.com/oauth2/v2/userinfo"));
+            request.getHeaders().setAccept("application/json");
 
-        HttpResponse response = request.execute();
-        String json = response.parseAsString();
+            HttpResponse response = request.execute();
+            String json = response.parseAsString();
 
-        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
-        return jsonObject.get("email").getAsString();
+            JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+            return jsonObject.get("email").getAsString();
+        } catch (Exception e) {
+            throw new GoogleLoginException("Errore durante il recupero dell'email da Google: " + e.getMessage(), e);
+        }
     }
 }

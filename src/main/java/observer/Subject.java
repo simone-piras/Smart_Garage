@@ -1,6 +1,6 @@
 package observer;
 import bean.NotificationBean;
-import observer.Observer;
+
 
 public interface Subject {
     void addObserver(Observer observer);
