@@ -13,3 +13,12 @@ fa67c1b4|AutoRicambi S.p.A.|Delivered|null|Lampadina Faro:11,Filtro Olio:10
 3d45dfb2|AutoRicambi S.p.A.|Delivered|null|Filtro Olio:41
 4067a1d1|AutoRicambi S.p.A.|Delivered|null|Candele:10,Batteria Auto:10,Lampadina Faro:11,Pastiglie Freno:4
 f98745da|AutoRicambi S.p.A.|Delivered|null|Lampadina Faro:34,Batteria Auto:21
+885aae79|AutoRicambi S.p.A.|Delivered|null|Olio Motore:20
+a03a29ae|AutoRicambi S.p.A.|Delivered|null|Fanale Posteriore:15
+8c38b533|AutoRicambi S.p.A.|Delivered|null|Liquido Freni:15,Lampadina Faro:13
+25364a62|PartiVeloci|Delivered|null|Liquido Freni:12
+e5afd21d|PartiVeloci|Delivered|null|Batteria Auto:12
+239ab3ef|PartiVeloci|Delivered|null|Batteria auto:8
+223d695e|MeccanicaPlus|Delivered|null|Lampadina Faro:12,Olio Motore:14
+0ff925fb|PartiVeloci|Delivered|null|Lampadina Faro:12,Liquido Freni:14,Filtro Aria:7,Batteria Auto:8
+de57816a|PartiVeloci|Delivered|null|Olio Motore:9,Pastiglie Freno:7

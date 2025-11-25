@@ -11,7 +11,15 @@ public class NotificationBean {
     private boolean hasSuggestedOrder;
     private int suggestedQuantity;
 
-    public NotificationBean() {}
+
+    public NotificationBean() {
+        /*
+     Costruttore vuoto utilizzato dai BeanEntityMapper per la conversione
+     da Entity a Bean. Necessario per permettere la creazione graduale
+     dell'oggetto con controlli null e logica condizionale complessa
+     durante il mapping.
+     */
+    }
 
     public NotificationBean(String message, OrderBean relatedOrder, String date, String partName) {
         this.message = message;

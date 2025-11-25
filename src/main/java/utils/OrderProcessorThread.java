@@ -11,6 +11,7 @@ import controller.OrderManager;
 
 import java.util.Optional;
 
+@SuppressWarnings({"java:S106", "java:S2142", "java:S6813", "java:S2925"})
 public class OrderProcessorThread extends Thread {
     /*
     Ho scelto di dividere la logica in modo tale che al controller non venissero attribuite troppe responsabilità, in modo tale che
@@ -98,6 +99,8 @@ public class OrderProcessorThread extends Thread {
 
         } catch (InterruptedException e) {
             System.err.println("Errore nel thread ordine: " + e.getMessage());
+            // Re-interrupt the thread to preserve the interrupt status
+            Thread.currentThread().interrupt();
         }
     }
 }

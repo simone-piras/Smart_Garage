@@ -2,6 +2,7 @@ package gui;
 
 import boundary.UserBoundary;
 import exception.DuplicateUsernameException;
+import exception.GoogleLoginException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,6 +15,7 @@ import javafx.animation.PauseTransition;
 import javafx.util.Duration;
 import controller.GoogleLoginManager;
 
+@SuppressWarnings("java:S106")  //Soppressione warning per System.out
 public class RegistrationViewController {
 
     @FXML
@@ -43,7 +45,7 @@ public class RegistrationViewController {
         PauseTransition pause=new PauseTransition(Duration.seconds(2));
         pause.setOnFinished(e -> switchToMainView(event));
         pause.play();
-        } catch (DuplicateUsernameException e) {
+        } catch (DuplicateUsernameException _) {
             showError("Username già registrato", event);
 
         }
@@ -63,12 +65,12 @@ public class RegistrationViewController {
             PauseTransition pause=new PauseTransition(Duration.seconds(2));
             pause.setOnFinished(e -> switchToMainView(event));
             pause.play();
-        } catch (DuplicateUsernameException ex) {
+        } catch (DuplicateUsernameException _) {
                 System.out.println("Utente già esistente");
                 showError("Username già registrato con Google", event);
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new GoogleLoginException("Errore durante la registrazione con Google: " + e.getMessage(), e);
         }
 
 

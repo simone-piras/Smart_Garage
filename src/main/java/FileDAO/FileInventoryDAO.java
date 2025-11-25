@@ -2,24 +2,26 @@ package FileDAO;
 
 import DAO.InventoryDAO;
 import entity.PartEntity;
+import exception.FileFormatException;
+import exception.FilePersistenceException;
+
 import java.io.*;
 import java.util.*;
 
 public class FileInventoryDAO implements InventoryDAO {
 
     private static final String FILE_PATH = "data/parts.txt";
-    private int nextId = 1;
+
 
     @Override
     public void savePart(PartEntity part) {
         List<PartEntity> allParts = getAllParts();
 
-        //Trova il prossimo ID disponibile
-        if (allParts.isEmpty()) {
-            nextId = 1;
-        } else {
-            nextId = allParts.stream().mapToInt(PartEntity::getId).max().orElse(0) + 1;
-        }
+        // 👇 CALCOLA nextId LOCALMENTE invece di usare campo
+        int nextId = allParts.stream()
+                .mapToInt(PartEntity::getId)
+                .max()
+                .orElse(0) + 1;
 
         //Se la parte non ha ID, gliene assegno uno
         if (part.getId() == 0) {
@@ -30,7 +32,7 @@ public class FileInventoryDAO implements InventoryDAO {
             writer.write(formatPart(part));
             writer.newLine();
         } catch (IOException e) {
-            throw new RuntimeException("Errore scrittura parte su file: " + e.getMessage(), e);
+            throw new FilePersistenceException("Errore scrittura parte su file: " + e.getMessage(), e);
         }
     }
 
@@ -43,7 +45,7 @@ public class FileInventoryDAO implements InventoryDAO {
                 if (p.getName().equals(name)) return Optional.of(p);
             }
         } catch (IOException e) {
-            throw new RuntimeException("Errore lettura parte da file: " + e.getMessage(), e);
+            throw new FilePersistenceException("Errore lettura parte da file: " + e.getMessage(), e);
         }
         return Optional.empty();
     }
@@ -78,7 +80,7 @@ public class FileInventoryDAO implements InventoryDAO {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException("Errore lettura parti da file: " + e.getMessage(), e);
+            throw new FilePersistenceException("Errore lettura parti da file: " + e.getMessage(), e);
         }
         return parts;
     }
@@ -119,14 +121,14 @@ public class FileInventoryDAO implements InventoryDAO {
                 String name = parts[0];
                 int quantity = Integer.parseInt(parts[1]);
                 int threshold = Integer.parseInt(parts[2]);
-                //Genera un ID temporaneo basato sull'hash del nome
-                int tempId = Math.abs(name.hashCode());
+                // 👇 USA name.hashCode() DIRETTAMENTE invece di Math.abs()
+                int tempId = name.hashCode();
                 return new PartEntity(tempId, name, quantity, threshold);
             } else {
-                throw new RuntimeException("Formato file non valido: " + line);
+                throw new FileFormatException("Formato file non valido: " + line);
             }
         } catch (NumberFormatException e) {
-            throw new RuntimeException("Errore parsing numero nel file: " + line, e);
+            throw new FileFormatException("Errore parsing numero nel file: " + line, e);
         }
     }
 
@@ -137,7 +139,7 @@ public class FileInventoryDAO implements InventoryDAO {
                 writer.newLine();
             }
         } catch (IOException e) {
-            throw new RuntimeException("Errore riscrittura file parti: " + e.getMessage(), e);
+            throw new FilePersistenceException("Errore riscrittura file parti: " + e.getMessage(), e);
         }
     }
 }

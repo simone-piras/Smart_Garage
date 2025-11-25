@@ -3,6 +3,7 @@ package DatabaseDAO;
 import DAO.SupplierDAO;
 import entity.SupplierEntity;
 import utils.DBConnection;
+import exception.DatabaseOperationException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -10,6 +11,11 @@ import java.util.List;
 import java.util.Optional;
 
 public class DatabaseSupplierDAO implements SupplierDAO {
+
+
+    private static final String COLUMN_NAME = "name";
+    private static final String COLUMN_EMAIL = "email";
+    private static final String COLUMN_PHONE = "phone";
 
     @Override
     public void saveSupplier(SupplierEntity supplier) {
@@ -22,27 +28,28 @@ public class DatabaseSupplierDAO implements SupplierDAO {
             ps.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Errore nel salvataggio fornitore: " + e.getMessage(), e);
+            throw new DatabaseOperationException("Errore nel salvataggio fornitore: " + e.getMessage(), e);
         }
     }
 
     @Override
     public Optional<SupplierEntity> getSupplierByName(String name) {
-        String sql = "SELECT * FROM suppliers WHERE name = ?";
+        // 👇 MODIFICATO: SELECT specifico invece di SELECT *
+        String sql = "SELECT name, email, phone FROM suppliers WHERE name = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, name);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return Optional.of(new SupplierEntity(
-                        rs.getString("name"),
-                        rs.getString("email"),
-                        rs.getString("phone"),
+                        rs.getString(COLUMN_NAME),
+                        rs.getString(COLUMN_EMAIL),
+                        rs.getString(COLUMN_PHONE),
                         false
                 ));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Errore nel recupero fornitore: " + e.getMessage(), e);
+            throw new DatabaseOperationException("Errore nel recupero fornitore: " + e.getMessage(), e);
         }
         return Optional.empty();
     }
@@ -50,20 +57,20 @@ public class DatabaseSupplierDAO implements SupplierDAO {
     @Override
     public List<SupplierEntity> getAllSuppliers() {
         List<SupplierEntity> suppliers = new ArrayList<>();
-        String sql = "SELECT * FROM suppliers";
+        String sql = "SELECT name, email, phone FROM suppliers";
         try (Connection conn = DBConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 suppliers.add(new SupplierEntity(
-                        rs.getString("name"),
-                        rs.getString("email"),
-                        rs.getString("phone"),
+                        rs.getString(COLUMN_NAME),
+                        rs.getString(COLUMN_EMAIL),
+                        rs.getString(COLUMN_PHONE),
                         false
                 ));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Errore nel recupero fornitori: " + e.getMessage(), e);
+            throw new DatabaseOperationException("Errore nel recupero fornitori: " + e.getMessage(), e);
         }
         return suppliers;
     }

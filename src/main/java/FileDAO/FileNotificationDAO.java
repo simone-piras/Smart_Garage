@@ -2,19 +2,21 @@ package FileDAO;
 
 import DAO.NotificationDAO;
 import entity.NotificationEntity;
+import exception.FilePersistenceException;
 import java.io.*;
 import java.util.*;
 
 public class FileNotificationDAO implements NotificationDAO {
 
     private static final String FILE_PATH = "data/notifications.txt";
-    private int nextId = 1;
+    private static final String NEWLINE_PLACEHOLDER = "@@@NEWLINE@@@";
 
     @Override
     public void saveNotification(NotificationEntity n) {
         List<NotificationEntity> allNotifications = getAllNotifications();
 
         //Trova il prossimo ID disponibile
+        int nextId;
         if (allNotifications.isEmpty()) {
             nextId = 1;
         } else {
@@ -30,7 +32,7 @@ public class FileNotificationDAO implements NotificationDAO {
             writer.write(formatNotification(n));
             writer.newLine();
         } catch (IOException e) {
-            throw new RuntimeException("Errore scrittura notifica su file: " + e.getMessage(), e);
+            throw new FilePersistenceException("Errore scrittura notifica su file: " + e.getMessage(), e);
         }
     }
 
@@ -49,17 +51,17 @@ public class FileNotificationDAO implements NotificationDAO {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException("Errore lettura notifiche da file: " + e.getMessage(), e);
+            throw new FilePersistenceException("Errore lettura notifiche da file: " + e.getMessage(), e);
         }
         return notifications;
     }
 
     @Override
     public void clearNotifications() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
-            // sovrascrive
+        try {
+            new FileWriter(FILE_PATH, false).close();
         } catch (IOException e) {
-            throw new RuntimeException("Errore nella cancellazione notifiche: " + e.getMessage(), e);
+            throw new FilePersistenceException("Errore nella cancellazione notifiche: " + e.getMessage(), e);
         }
     }
 
@@ -74,7 +76,7 @@ public class FileNotificationDAO implements NotificationDAO {
     }
 
     private String formatNotification(NotificationEntity n) {
-        String escapedMessage = n.getMessage().replace("\n", "@@@NEWLINE@@@").replace("|", "\\|");
+        String escapedMessage = n.getMessage().replace("\n", NEWLINE_PLACEHOLDER).replace("|", "\\|");
         return n.getId() + "|" + escapedMessage + "|" +
                 (n.getPartName() != null ? n.getPartName() : "null") + "|" +
                 n.getDate() + "|" +
@@ -82,13 +84,14 @@ public class FileNotificationDAO implements NotificationDAO {
                 n.getSuggestedQuantity();
     }
 
+    @SuppressWarnings("java:S106") // Soppressione warning per System.err
     private NotificationEntity parseNotification(String line) {
         try {
             String[] parts = line.split("(?<!\\\\)\\|");
             //CONTROLLA se ci sono almeno 6 parti
             if (parts.length >= 6) {
                 int id = Integer.parseInt(parts[0]);
-                String message = parts[1].replace("@@@NEWLINE@@@", "\n").replace("\\|", "|");
+                String message = parts[1].replace(NEWLINE_PLACEHOLDER, "\n").replace("\\|", "|");
                 String partName = parts[2].equals("null") ? null : parts[2];
                 String date = parts[3];
                 boolean hasSuggestedOrder = Boolean.parseBoolean(parts[4]);
@@ -99,13 +102,13 @@ public class FileNotificationDAO implements NotificationDAO {
             }
             //SE MANCA L'ID
             else if (parts.length == 5) {
-                String message = parts[0].replace("@@@NEWLINE@@@", "\n").replace("\\|", "|");
+                String message = parts[0].replace(NEWLINE_PLACEHOLDER, "\n").replace("\\|", "|");
                 String partName = parts[1].equals("null") ? null : parts[1];
                 String date = parts[2];
                 boolean hasSuggestedOrder = Boolean.parseBoolean(parts[3]);
                 int suggestedQuantity = Integer.parseInt(parts[4]);
-                //Genera un ID temporaneo basato sull'hash del messaggio
-                int tempId = Math.abs(message.hashCode());
+                //Usa direttamente l'hash del messaggio
+                int tempId = message.hashCode();
 
                 return new NotificationEntity(tempId, message, date, partName,
                         hasSuggestedOrder, suggestedQuantity, null);
@@ -113,7 +116,7 @@ public class FileNotificationDAO implements NotificationDAO {
                 System.err.println("Formato notifica non valido: " + line);
                 return null;
             }
-        } catch (Exception e) {
+        } catch (Exception _) {
             System.err.println("Errore parsing notifica: " + line);
             return null;
         }
@@ -126,7 +129,7 @@ public class FileNotificationDAO implements NotificationDAO {
                 writer.newLine();
             }
         } catch (IOException e) {
-            throw new RuntimeException("Errore scrittura notifiche su file: " + e.getMessage(), e);
+            throw new FilePersistenceException("Errore scrittura notifiche su file: " + e.getMessage(), e);
         }
     }
 }

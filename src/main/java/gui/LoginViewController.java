@@ -19,6 +19,7 @@ import utils.SharedManagers;
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
 
+@SuppressWarnings("java:S106")  //Soppressione warning per System.out
 public class LoginViewController {
 
     private final UserBoundary userBoundary = new UserBoundary();

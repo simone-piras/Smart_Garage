@@ -3,6 +3,7 @@ package mapper;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("java:S6548") // Soppressione warning Singleton
 public class BeanEntityMapperFactory {
     private static final BeanEntityMapperFactory instance = new BeanEntityMapperFactory();
     private final Map<Class<?>, BeanEntityMapper<?, ?>> mappers = new HashMap<>();
@@ -28,11 +29,13 @@ public class BeanEntityMapperFactory {
         return (BeanEntityMapper<B, E>) mappers.get(clazz);
     }
 
+    @SuppressWarnings("java:S1172")
     public <B, E> B toBean(E entity, Class<B> beanClass) {
         BeanEntityMapper<B, E> mapper = getMapper(entity.getClass());
         return mapper != null ? mapper.toBean(entity) : null;
     }
 
+    @SuppressWarnings("java:S1172")
     public <B, E> E toEntity(B bean, Class<E> entityClass) {
         BeanEntityMapper<B, E> mapper = getMapper(bean.getClass());
         return mapper != null ? mapper.toEntity(bean) : null;

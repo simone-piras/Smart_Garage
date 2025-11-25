@@ -2,8 +2,12 @@ package FileDAO;
 
 import DAO.UserDAO;
 import entity.UserEntity;
+import exception.FilePersistenceException;
 import java.io.*;
 import java.util.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class FileUserDAO implements UserDAO {
 
@@ -15,9 +19,12 @@ public class FileUserDAO implements UserDAO {
         if (!file.exists()) {
             try {
                 file.getParentFile().mkdirs();
-                file.createNewFile();
+                boolean fileCreated = file.createNewFile();
+                if (!fileCreated) {
+                    throw new FilePersistenceException("Impossibile creare il file utenti: " + FILE_PATH);
+                }
             } catch (IOException e) {
-                throw new RuntimeException("Errore creazione file utenti: " + e.getMessage(), e);
+                throw new FilePersistenceException("Errore creazione file utenti: " + e.getMessage(), e);
             }
         }
 
@@ -35,7 +42,7 @@ public class FileUserDAO implements UserDAO {
             writer.write(formatUser(user));
             writer.newLine();
         } catch (IOException e) {
-            throw new RuntimeException("Errore durante il salvataggio dell'utente su file: " + e.getMessage(), e);
+            throw new FilePersistenceException("Errore durante il salvataggio dell'utente su file: " + e.getMessage(), e);
         }
     }
 
@@ -57,7 +64,7 @@ public class FileUserDAO implements UserDAO {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException("Errore durante la lettura dell'utente da file: " + e.getMessage(), e);
+            throw new FilePersistenceException("Errore durante la lettura dell'utente da file: " + e.getMessage(), e);
         }
         return Optional.empty();
     }
@@ -77,7 +84,7 @@ public class FileUserDAO implements UserDAO {
     public void updateDefaultSupplier(String username, String newSupplierName) {
         File inputFile = new File(FILE_PATH);
         if (!inputFile.exists()) {
-            throw new RuntimeException("File utenti non trovato: " + username);
+            throw new FilePersistenceException("File utenti non trovato: " + FILE_PATH);
         }
 
         File tempFile = new File("data/temp_users.txt");
@@ -90,21 +97,28 @@ public class FileUserDAO implements UserDAO {
             while ((line = reader.readLine()) != null) {
                 if (!line.trim().isEmpty()) {
                     UserEntity user = parseUser(line);
-                    if (user.getUsername().equals(username)) {
-                        user.setDefaultSupplierName(newSupplierName);
-                        updated = true;
+                    if (user != null) {
+                        if (user.getUsername().equals(username)) {
+                            user.setDefaultSupplierName(newSupplierName);
+                            updated = true;
+                        }
+                        writer.write(formatUser(user));
+                        writer.newLine();
                     }
-                    writer.write(formatUser(user));
-                    writer.newLine();
                 }
             }
-            if (!updated) throw new RuntimeException("Utente non trovato: " + username);
+            if (!updated) throw new FilePersistenceException("Utente non trovato: " + username);
         } catch (IOException e) {
-            throw new RuntimeException("Errore durante l'aggiornamento del fornitore predefinito: " + e.getMessage(), e);
+            throw new FilePersistenceException("Errore durante l'aggiornamento del fornitore predefinito: " + e.getMessage(), e);
         }
 
-        if (!inputFile.delete() || !tempFile.renameTo(inputFile)) {
-            throw new RuntimeException("Errore nel salvataggio del file aggiornato.");
+        try {
+            Path inputFilePath = Paths.get(inputFile.getPath());
+            Path tempFilePath = Paths.get(tempFile.getPath());
+            Files.delete(inputFilePath);
+            Files.move(tempFilePath, inputFilePath);
+        } catch (IOException e) {
+            throw new FilePersistenceException("Errore nel salvataggio del file aggiornato: " + e.getMessage(), e);
         }
     }
 
@@ -127,7 +141,7 @@ public class FileUserDAO implements UserDAO {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException("Errore lettura utenti da file: " + e.getMessage(), e);
+            throw new FilePersistenceException("Errore lettura utenti da file: " + e.getMessage(), e);
         }
         return users;
     }
@@ -137,6 +151,7 @@ public class FileUserDAO implements UserDAO {
                 u.getEmail() + "|" + (u.getDefaultSupplierName() != null ? u.getDefaultSupplierName() : "");
     }
 
+    @SuppressWarnings("java:S106") // Soppressione warning per System.err
     private UserEntity parseUser(String line) {
         try {
             String[] parts = line.split("\\|", -1); // Usa -1 per preservare campi vuoti
@@ -153,7 +168,7 @@ public class FileUserDAO implements UserDAO {
                 System.err.println(" Formato file utenti non valido: " + line);
                 return null;
             }
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException _) {
             System.err.println(" Errore parsing ID nel file utenti: " + line);
             return null;
         }

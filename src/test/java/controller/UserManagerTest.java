@@ -32,6 +32,7 @@ class UserManagerTest {
     }
 
     @AfterEach
+    @SuppressWarnings("java:S1481")
     void tearDown() {
         // Pulizia utenti di test
         for (String username : createdUsernames) {

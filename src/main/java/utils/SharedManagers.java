@@ -3,6 +3,7 @@ package utils;
 import controller.InventoryManager;
 import controller.NotificationManager;
 
+@SuppressWarnings("java:S6548") // Soppressione warning Singleton
 public class SharedManagers {
     private static SharedManagers instance;
 

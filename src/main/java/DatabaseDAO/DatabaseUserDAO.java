@@ -3,11 +3,18 @@ package DatabaseDAO;
 import DAO.UserDAO;
 import entity.UserEntity;
 import utils.DBConnection;
+import exception.DatabaseOperationException;
 
 import java.sql.*;
 import java.util.Optional;
 
 public class DatabaseUserDAO implements UserDAO {
+
+
+    private static final String COLUMN_USERNAME = "username";
+    private static final String COLUMN_PASSWORD = "password";
+    private static final String COLUMN_EMAIL = "email";
+    private static final String COLUMN_DEFAULT_SUPPLIER = "default_supplier";
 
     @Override
     public void saveUser(UserEntity user) {
@@ -21,27 +28,28 @@ public class DatabaseUserDAO implements UserDAO {
             ps.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Errore nel salvataggio utente: " + e.getMessage(), e);
+            throw new DatabaseOperationException("Errore nel salvataggio utente: " + e.getMessage(), e);
         }
     }
 
     @Override
     public Optional<UserEntity> getUserByUsername(String username) {
-        String sql = "SELECT * FROM users WHERE username = ?";
+
+        String sql = "SELECT username, email, password, default_supplier FROM users WHERE username = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return Optional.of(new UserEntity(
-                        rs.getString("username"),
-                        rs.getString("email"),
-                        rs.getString("password"),
-                        rs.getString("default_supplier")
+                        rs.getString(COLUMN_USERNAME),
+                        rs.getString(COLUMN_EMAIL),
+                        rs.getString(COLUMN_PASSWORD),
+                        rs.getString(COLUMN_DEFAULT_SUPPLIER)
                 ));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Errore nel recupero utente: " + e.getMessage(), e);
+            throw new DatabaseOperationException("Errore nel recupero utente: " + e.getMessage(), e);
         }
         return Optional.empty();
     }
@@ -55,7 +63,7 @@ public class DatabaseUserDAO implements UserDAO {
             ResultSet rs = ps.executeQuery();
             return rs.next();
         } catch (SQLException e) {
-            throw new RuntimeException("Errore nel controllo utente: " + e.getMessage(), e);
+            throw new DatabaseOperationException("Errore nel controllo utente: " + e.getMessage(), e);
         }
     }
 
@@ -69,7 +77,7 @@ public class DatabaseUserDAO implements UserDAO {
             ResultSet rs = ps.executeQuery();
             return rs.next();
         } catch (SQLException e) {
-            throw new RuntimeException("Errore nella validazione credenziali: " + e.getMessage(), e);
+            throw new DatabaseOperationException("Errore nella validazione credenziali: " + e.getMessage(), e);
         }
     }
 
@@ -82,7 +90,7 @@ public class DatabaseUserDAO implements UserDAO {
             ps.setString(2, username);
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Errore nell'aggiornamento fornitore predefinito: " + e.getMessage(), e);
+            throw new DatabaseOperationException("Errore nell'aggiornamento fornitore predefinito: " + e.getMessage(), e);
         }
     }
 }

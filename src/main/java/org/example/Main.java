@@ -9,6 +9,7 @@ import utils.Scheduler;
 
 import java.util.Scanner;
 
+@SuppressWarnings("java:S106")  //Soppressione warning per System.out
 public class Main {
     public static void main(String[] args) {
         System.out.println("=== SMART GARAGE ===");

@@ -3,7 +3,7 @@ package bean;
 import entity.OrderEntity;
 import enumerations.OrderStatus;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 public class OrderBean {
 
@@ -12,7 +12,15 @@ public class OrderBean {
     private OrderStatus status;
     private List<OrderItemBean> items;
 
-    public OrderBean() {}
+
+    public OrderBean() {
+        /*
+     Costruttore vuoto utilizzato dai BeanEntityMapper per la conversione
+     da Entity a Bean. Necessario per permettere la creazione graduale
+     dell'oggetto con controlli null e logica condizionale complessa
+     durante il mapping.
+     */
+    }
 
     public String getOrderID() {
         return orderID;
@@ -69,7 +77,7 @@ public class OrderBean {
                 String statusUpper = e.getStatus().toUpperCase().replace(" ", "_");
                 OrderStatus orderStatus = OrderStatus.valueOf(statusUpper);
                 b.setStatus(orderStatus);
-            } catch (IllegalArgumentException ex) {
+            } catch (IllegalArgumentException _) {
                 // Se la conversione fallisce, usa stato di default
                 b.setStatus(OrderStatus.CREATING);
             }
@@ -80,7 +88,7 @@ public class OrderBean {
         if (e.getItems() != null)
             b.setItems(e.getItems().stream()
                     .map(OrderItemBean::fromEntity)
-                    .collect(Collectors.toList()));
+                    .toList());
         return b;
     }
 }

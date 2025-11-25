@@ -3,7 +3,6 @@ package gui;
 import bean.NotificationBean;
 import bean.OrderBean;
 import bean.OrderItemBean;
-import enumerations.OrderStatus;
 import exception.PartNotFoundException;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -17,7 +16,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import boundary.InventoryBoundary;
-import boundary.NotificationBoundary;
 import boundary.OrderBoundary;
 import boundary.SupplierBoundary;
 import boundary.UserBoundary;
@@ -41,10 +39,8 @@ public class OrderViewController {
     private boolean editMode;
     private OrderBean currentOrder;
     private ComboBox<String> supplierCombo;
-    private Button useDefaultSupplierBtn;
 
     private InventoryBoundary inventoryBoundary;
-    private NotificationBoundary notificationBoundary;
     private OrderBoundary orderBoundary;
     private SupplierBoundary supplierBoundary;
     private UserBoundary userBoundary;
@@ -62,7 +58,6 @@ public class OrderViewController {
         this.editMode = editMode;
 
         this.inventoryBoundary = new InventoryBoundary(inventoryManager, notificationManager);
-        this.notificationBoundary = new NotificationBoundary(notificationManager);
         this.orderBoundary = new OrderBoundary();
         this.supplierBoundary = new SupplierBoundary();
         this.userBoundary = new UserBoundary();
@@ -75,14 +70,14 @@ public class OrderViewController {
         orderBoardBox.getChildren().clear();
         addSupplierSelection();
 
+
         if (editMode && suggestedOrder.isEmpty()) {
-            orderStatusLabel.setText("Crea il tuo ordine manuale.");
-            addEmptyRow();
-            addAddRowButton();
-            addConfirmButton();
-            return;
+            Label manualOrderLabel = new Label("Crea il tuo ordine manuale.");
+            manualOrderLabel.setStyle("-fx-font-weight: bold; -fx-padding: 10 0 5 0;");
+            orderBoardBox.getChildren().add(manualOrderLabel);
         }
 
+        //aggiungi le righe delle scorte suggerite
         for (NotificationBean n : suggestedOrder) {
             if (n.isHasSuggestedOrder()) {
                 HBox row = new HBox(10);
@@ -113,7 +108,14 @@ public class OrderViewController {
             }
         }
 
-        if (editMode) addAddRowButton();
+        //aggiungi i controlli per l'ordine manuale
+        if (editMode && suggestedOrder.isEmpty()) {
+            addEmptyRow();
+            addAddRowButton();
+        } else if (editMode) {
+            addAddRowButton();
+        }
+
         addConfirmButton();
     }
 
@@ -123,6 +125,7 @@ public class OrderViewController {
         ComboBox<String> nameCombo = new ComboBox<>();
         inventoryBoundary.getAllParts().forEach(part -> nameCombo.getItems().add(part.getName()));
         nameCombo.setEditable(true);
+        nameCombo.setPromptText("Seleziona parte");
 
         Spinner<Integer> qtySpinner = new Spinner<>(1, 999, 1);
         newRow.getChildren().addAll(nameCombo, qtySpinner);
@@ -131,8 +134,27 @@ public class OrderViewController {
 
     private void addAddRowButton() {
         Button addRowBtn = new Button("+ Aggiungi scorta");
-        addRowBtn.setOnAction(e -> addEmptyRow());
+        addRowBtn.setOnAction(e -> {
+            // Trova l'indice del pulsante "Aggiungi scorta" e inserisci la nuova riga PRIMA di esso
+            int addButtonIndex = orderBoardBox.getChildren().indexOf(addRowBtn);
+            if (addButtonIndex != -1) {
+                addEmptyRowAtPosition(addButtonIndex);
+            }
+        });
         orderBoardBox.getChildren().add(addRowBtn);
+    }
+
+    private void addEmptyRowAtPosition(int index) {
+        HBox newRow = new HBox(10);
+
+        ComboBox<String> nameCombo = new ComboBox<>();
+        inventoryBoundary.getAllParts().forEach(part -> nameCombo.getItems().add(part.getName()));
+        nameCombo.setEditable(true);
+        nameCombo.setPromptText("Seleziona parte");
+
+        Spinner<Integer> qtySpinner = new Spinner<>(1, 999, 1);
+        newRow.getChildren().addAll(nameCombo, qtySpinner);
+        orderBoardBox.getChildren().add(index, newRow); // Inserisce PRIMA del pulsante
     }
 
     private void addConfirmButton() {
@@ -149,7 +171,7 @@ public class OrderViewController {
         supplierCombo.setPromptText("Seleziona fornitore");
         supplierBoundary.getAllSuppliers().forEach(s -> supplierCombo.getItems().add(s.getName()));
 
-        useDefaultSupplierBtn = new Button("Usa fornitore predefinito");
+        Button useDefaultSupplierBtn = new Button("Usa fornitore predefinito");
         var user = userBoundary.getUser(loggedUsername);
         if (user != null && user.getDefaultSupplierName() != null) {
             String defaultSupplier = user.getDefaultSupplierName();
@@ -167,7 +189,6 @@ public class OrderViewController {
         this.suggestedOrder.clear();
         this.currentOrder = null;
         this.editMode = true;
-        orderStatusLabel.setText("Create your order: ");
         orderBoardBox.getChildren().clear();
         loadOrderBoard();
     }
@@ -210,6 +231,13 @@ public class OrderViewController {
     private List<OrderItemBean> buildOrderItems() throws PartNotFoundException {
         List<OrderItemBean> items = new ArrayList<>();
 
+        addSuggestedOrderItems(items);
+        addManualOrderItems(items);
+
+        return items;
+    }
+
+    private void addSuggestedOrderItems(List<OrderItemBean> items) {
         for (NotificationBean n : suggestedOrder) {
             if (n.isHasSuggestedOrder() && n.getSuggestedQuantity() > 0) {
                 OrderItemBean item = new OrderItemBean();
@@ -218,36 +246,40 @@ public class OrderViewController {
                 items.add(item);
             }
         }
+    }
 
+    private void addManualOrderItems(List<OrderItemBean> items) throws PartNotFoundException {
         for (Node node : orderBoardBox.getChildren()) {
             if (node instanceof HBox row) {
-                String name = null;
-                Integer qty = null;
-
-                for (Node child : row.getChildren()) {
-                    if (child instanceof ComboBox<?> cb) {
-                        name = ((ComboBox<String>) cb).getValue();
-                    } else if (child instanceof Spinner<?> sp) {
-                        Object val = sp.getValue();
-                        if (val instanceof Integer i) qty = i;
-                    }
-                }
-
-                if (name != null && !name.isEmpty() && qty != null && qty > 0) {
-                    final String finalName = name;
-                    boolean exists = inventoryBoundary.getAllParts().stream()
-                            .anyMatch(p -> p.getName().equals(finalName));
-                    if (!exists) throw new PartNotFoundException("Parte non trovata: " + finalName);
-
-
-                    OrderItemBean item = new OrderItemBean();
-                    item.setPartName(finalName);
-                    item.setQuantity(qty);
-                    items.add(item);
-                }
+                processRowForOrderItems(row, items);
             }
         }
-        return items;
+    }
+
+    private void processRowForOrderItems(HBox row, List<OrderItemBean> items) throws PartNotFoundException {
+        String name = null;
+        Integer qty = null;
+
+        for (Node child : row.getChildren()) {
+            if (child instanceof ComboBox<?> cb) {
+                name = ((ComboBox<String>) cb).getValue();
+            } else if (child instanceof Spinner<?> sp) {
+                Object val = sp.getValue();
+                if (val instanceof Integer i) qty = i;
+            }
+        }
+
+        if (name != null && !name.isEmpty() && qty != null && qty > 0) {
+            final String finalName = name;
+            boolean exists = inventoryBoundary.getAllParts().stream()
+                    .anyMatch(p -> p.getName().equals(finalName));
+            if (!exists) throw new PartNotFoundException("Parte non trovata: " + finalName);
+
+            OrderItemBean item = new OrderItemBean();
+            item.setPartName(finalName);
+            item.setQuantity(qty);
+            items.add(item);
+        }
     }
 
     @FXML
@@ -333,17 +365,7 @@ public class OrderViewController {
             Parent root = loader.load();
             Object controller = loader.getController();
 
-            try {
-                controller.getClass()
-                        .getMethod("initData", String.class, InventoryManager.class, NotificationManager.class)
-                        .invoke(controller, loggedUsername, inventoryManager, notificationManager);
-            } catch (NoSuchMethodException ignored) {}
-
-            try {
-                controller.getClass()
-                        .getMethod("initData", String.class, InventoryManager.class, NotificationManager.class, List.class, boolean.class)
-                        .invoke(controller, loggedUsername, inventoryManager, notificationManager, suggestedOrder, editMode);
-            } catch (NoSuchMethodException ignored) {}
+            invokeInitDataMethods(controller);
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
@@ -351,6 +373,24 @@ public class OrderViewController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void invokeInitDataMethods(Object controller) {
+        try {
+            controller.getClass()
+                    .getMethod("initData", String.class, InventoryManager.class, NotificationManager.class)
+                    .invoke(controller, loggedUsername, inventoryManager, notificationManager);
+        } catch (NoSuchMethodException _) {
+            // Il controller non ha questo metodo, è normale
+        } catch (Exception e) { e.printStackTrace(); }
+
+        try {
+            controller.getClass()
+                    .getMethod("initData", String.class, InventoryManager.class, NotificationManager.class, List.class, boolean.class)
+                    .invoke(controller, loggedUsername, inventoryManager, notificationManager, suggestedOrder, editMode);
+        } catch (NoSuchMethodException _) {
+            // Il controller non ha questo metodo, è normale
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
     @FXML private void goToHome(ActionEvent e) { loadView("/fxml/GarageHomeView.fxml", e); }

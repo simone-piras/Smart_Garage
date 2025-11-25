@@ -3,6 +3,13 @@ package cli;
 import boundary.UserBoundary;
 import controller.GoogleLoginManager;
 
+
+/*
+ Utilizza System.out per l'interazione utente in ambiente CLI.
+ In un'applicazione CLI, System.out è lo standard per l'output utente.
+ L'uso di logger sarebbe inappropriato per l'interazione diretta con l'utente.
+ */
+@SuppressWarnings("java:S106")
 public class GoogleRegistrationViewCLI {
     private final UserBoundary userBoundary = new UserBoundary();
 

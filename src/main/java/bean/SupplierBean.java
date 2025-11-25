@@ -8,7 +8,14 @@ public class SupplierBean {
     private String email;
     private String phone;
 
-    public SupplierBean() {}
+    public SupplierBean() {
+        /*
+     Costruttore vuoto utilizzato dai BeanEntityMapper per la conversione
+     da Entity a Bean. Necessario per permettere la creazione graduale
+     dell'oggetto con controlli null e logica condizionale complessa
+     durante il mapping.
+     */
+    }
 
     public String getName() {
         return name;

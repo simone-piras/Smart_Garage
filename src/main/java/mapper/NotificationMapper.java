@@ -27,7 +27,7 @@ public class NotificationMapper implements BeanEntityMapper<NotificationBean, No
     public NotificationEntity toEntity(NotificationBean bean) {
         if (bean == null) return null;
 
-        NotificationEntity entity = new NotificationEntity(
+        return new NotificationEntity(
                 bean.getMessage(),
                 bean.getDate(),
                 bean.getPartName(),
@@ -35,7 +35,5 @@ public class NotificationMapper implements BeanEntityMapper<NotificationBean, No
                 bean.getSuggestedQuantity(),
                 bean.getRelatedOrder() != null ? new OrderMapper().toEntity(bean.getRelatedOrder()) : null
         );
-
-        return entity;
     }
 }

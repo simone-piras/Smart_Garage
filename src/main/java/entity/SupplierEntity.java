@@ -38,5 +38,5 @@ public class SupplierEntity {
     public void setDefault(boolean isDefault) { this.isDefault = isDefault; }
 
     // Metodi di compatibilità
-    public String getPhone() { return phoneNumber; }
+    public String getPhone() { return getPhoneNumber(); }
 }

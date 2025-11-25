@@ -7,7 +7,14 @@ public class OrderItemBean {
     private String partName;
     private int quantity;
 
-    public OrderItemBean() {}
+    public OrderItemBean() {
+        /*
+     Costruttore vuoto utilizzato dai BeanEntityMapper per la conversione
+     da Entity a Bean. Necessario per permettere la creazione graduale
+     dell'oggetto con controlli null e logica condizionale complessa
+     durante il mapping.
+     */
+    }
 
     public String getPartName() {
         return partName;

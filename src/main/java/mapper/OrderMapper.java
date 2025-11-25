@@ -4,7 +4,7 @@ import bean.OrderBean;
 import entity.OrderEntity;
 import entity.SupplierEntity;
 import enumerations.OrderStatus;
-import java.util.stream.Collectors;
+
 
 public class OrderMapper implements BeanEntityMapper<OrderBean, OrderEntity> {
 
@@ -19,7 +19,7 @@ public class OrderMapper implements BeanEntityMapper<OrderBean, OrderEntity> {
             try {
                 OrderStatus status = OrderStatus.valueOf(entity.getStatus().toUpperCase().replace(" ", "_"));
                 bean.setStatus(status);
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException _) {
                 // Se non trova corrispondenza, usa stato di default
                 bean.setStatus(OrderStatus.CREATING);
             }
@@ -30,7 +30,7 @@ public class OrderMapper implements BeanEntityMapper<OrderBean, OrderEntity> {
         if (entity.getItems() != null) {
             bean.setItems(entity.getItems().stream()
                     .map(item -> new OrderItemMapper().toBean(item))
-                    .collect(Collectors.toList()));
+                    .toList());
         }
 
         return bean;
@@ -52,7 +52,7 @@ public class OrderMapper implements BeanEntityMapper<OrderBean, OrderEntity> {
                 bean.getItems() != null ?
                         bean.getItems().stream()
                                 .map(item -> new OrderItemMapper().toEntity(item))
-                                .collect(Collectors.toList()) : null,
+                                .toList() : null,
                 statusString,
                 null
         );

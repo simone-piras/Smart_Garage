@@ -9,7 +9,14 @@ public class UserBean {
     private String email;
     private String defaultSupplierName;
 
-    public UserBean() {}
+    public UserBean() {
+        /*
+     Costruttore vuoto utilizzato dai BeanEntityMapper per la conversione
+     da Entity a Bean. Necessario per permettere la creazione graduale
+     dell'oggetto con controlli null e logica condizionale complessa
+     durante il mapping.
+     */
+    }
 
     public UserBean(String username, String password, String email) {
         this.username = username;

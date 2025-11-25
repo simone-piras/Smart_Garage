@@ -6,7 +6,6 @@ import bean.OrderItemBean;
 import enumerations.OrderStatus;
 import controller.OrderManager;
 import controller.SupplierManager;
-import controller.UserManager;
 import utils.OrderProcessorThread;
 import utils.SharedManagers;
 
@@ -15,10 +14,18 @@ import java.util.UUID;
 
 public class OrderBoundary {
     private final OrderManager orderManager = new OrderManager();
-    private final UserManager userManager = new UserManager();
     private final SupplierManager supplierManager = new SupplierManager();
     private final NotificationBoundary notificationBoundary = new NotificationBoundary(SharedManagers.getInstance().getNotificationManager());
 
+    /*
+     Il parametro username è necessario per tracciare l'autore degli ordini
+     e recuperare le preferenze utente (fornitore predefinito).
+     Utilizzato sia in CLI che GUI per:
+     - Recuperare UserBean via UserBoundary.getUser(username)
+     - Impostare fornitore predefinito via SupplierBoundary.setDefaultSupplier()
+     - Tracciare chi ha effettuato l'ordine
+     */
+    @SuppressWarnings("java:S1172") // Parameter 'username' is required for user tracking
     //Crea un ordine manuale
     public OrderBean createOrder(String username, String supplierName, List<OrderItemBean> items) {
         OrderBean order = new OrderBean();//crea l'oggetto ordine

@@ -8,7 +8,14 @@ public class PartBean {
     private int quantity;
     private int reorderThreshold;
 
-    public PartBean() {}
+    public PartBean() {
+        /*
+     Costruttore vuoto utilizzato dai BeanEntityMapper per la conversione
+     da Entity a Bean. Necessario per permettere la creazione graduale
+     dell'oggetto con controlli null e logica condizionale complessa
+     durante il mapping.
+     */
+    }
 
     public PartBean(String name, int quantity, int reorderThreshold) {
         this.name = name;

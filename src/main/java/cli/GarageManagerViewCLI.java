@@ -9,6 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/*
+ Utilizza System.out per l'interazione utente in ambiente CLI.
+ In un'applicazione CLI, System.out è lo standard per l'output utente.
+ L'uso di logger sarebbe inappropriato per l'interazione diretta con l'utente.
+ */
+@SuppressWarnings("java:S106")
 public class GarageManagerViewCLI {
     //Singleton delle boundary per tutta la CLI, ogni boundary usa il costruttore senza parametri che si appoggia a SHaredManagers
     private static final InventoryBoundary inventoryBoundary = new InventoryBoundary();
@@ -17,6 +23,13 @@ public class GarageManagerViewCLI {
     private static final SupplierBoundary supplierBoundary = new SupplierBoundary();
     private static final UserBoundary userBoundary = new UserBoundary();
     private static final Scanner SCANNER = new Scanner(System.in);
+
+    //COSTANTI PER RISOLVERE GLI ISSUE
+    private static final String MSG_QUANTITA_NON_VALIDA = "Quantità non valida.";
+    private static final String MSG_NESSUN_FORNITORE = "Nessun fornitore disponibile.";
+    private static final String MSG_OPZIONE_NON_VALIDA = "Opzione non valida.";
+    private static final String MSG_OPERAZIONE_ANNULLATA = "Operazione annullata.";
+    private static final String MSG_ARTICOLO_RIMOSSO = "Articolo rimosso dall'ordine.";
 
     private static final String MENU_TITLE = "========== GESTORE OFFICINA ==========";
     private static final String[] MENU_OPTIONS = {
@@ -46,7 +59,7 @@ public class GarageManagerViewCLI {
                 case "6" -> handleVisualizzaOrdini();
                 case "7" -> handleImpostaFornitorePredefinito(username);
                 case "8" -> exit = true;
-                default -> System.out.println("Opzione non valida.");
+                default -> System.out.println(MSG_OPZIONE_NON_VALIDA);
             }
         }
     }
@@ -86,11 +99,11 @@ public class GarageManagerViewCLI {
             } else {
                 System.out.println("Parte non trovata.");
             }
-        } catch (NumberFormatException e) {
-            System.out.println("Quantità non valida.");
-        } catch (InsufficientStockException e) {
+        } catch (NumberFormatException _) {
+            System.out.println(MSG_QUANTITA_NON_VALIDA);
+        } catch (InsufficientStockException _) {
             System.out.println("Errore: quantità insufficiente per la parte \"" + nomeParte + "\".");
-        } catch (PartNotFoundException e) {
+        } catch (PartNotFoundException _) {
             System.out.println("Errore: parte \"" + nomeParte + "\" non trovata.");
         }
     }
@@ -112,8 +125,8 @@ public class GarageManagerViewCLI {
                 item.setPartName(partName);
                 item.setQuantity(qty);
                 items.add(item);
-            } catch (NumberFormatException e) {
-                System.out.println("Quantità non valida.");
+            } catch (NumberFormatException _) {
+                System.out.println(MSG_QUANTITA_NON_VALIDA);
             }
         }
 
@@ -145,7 +158,7 @@ public class GarageManagerViewCLI {
         if (supplierName == null) {
             List<SupplierBean> suppliers = supplierBoundary.getAllSuppliers();
             if (suppliers.isEmpty()) {
-                System.out.println("Nessun fornitore disponibile.");
+                System.out.println(MSG_NESSUN_FORNITORE);
                 return null;
             }
 
@@ -163,7 +176,7 @@ public class GarageManagerViewCLI {
     private static void handleVisualizzaFornitori() {
         List<SupplierBean> suppliers = supplierBoundary.getAllSuppliers();
         if (suppliers.isEmpty()) {
-            System.out.println("Nessun fornitore disponibile.");
+            System.out.println(MSG_NESSUN_FORNITORE);
             return;
         }
 
@@ -176,6 +189,7 @@ public class GarageManagerViewCLI {
         }
     }
 
+    //METODO SCOMPOSTO per ridurre Cognitive Complexity
     private static void handleVisualizzaNotifiche(String username) {
         List<NotificationBean> notifications = notificationBoundary.getAllNotifications();
         List<OrderItemBean> suggestedItems = notificationBoundary.getSuggestedOrderItems();
@@ -185,12 +199,15 @@ public class GarageManagerViewCLI {
             return;
         }
 
-        // Notifiche Ordini
+        mostraNotificheOrdini(notifications);
+        mostraNotificheScorte(notifications);
+        gestisciOrdineSuggerito(username, suggestedItems);
+    }
+
+    private static void mostraNotificheOrdini(List<NotificationBean> notifications) {
         boolean hasOrderNotifications = false;
         for (NotificationBean n : notifications) {
-            if (n.getPartName() == null ||
-                    (n.getMessage() != null &&
-                            (n.getMessage().contains("Ordine") || n.getMessage().contains("ORDINE CONSEGNATO")))) {
+            if (isNotificaOrdine(n)) {
                 if (!hasOrderNotifications) {
                     System.out.println("--- NOTIFICHE ORDINI ---");
                     hasOrderNotifications = true;
@@ -198,11 +215,12 @@ public class GarageManagerViewCLI {
                 System.out.println("- " + n.getMessage());
             }
         }
+    }
 
-        // Notifiche Scorte
+    private static void mostraNotificheScorte(List<NotificationBean> notifications) {
         boolean hasStockNotifications = false;
         for (NotificationBean n : notifications) {
-            if (n.getPartName() != null && n.getMessage() != null && n.getMessage().contains("Scorte basse")) {
+            if (isNotificaScorte(n)) {
                 if (!hasStockNotifications) {
                     System.out.println("\n--- NOTIFICHE SCORTE ---");
                     hasStockNotifications = true;
@@ -210,52 +228,79 @@ public class GarageManagerViewCLI {
                 System.out.println("- " + n.getMessage());
             }
         }
+    }
 
-        // Ordine Suggerito
-        if (!suggestedItems.isEmpty()) {
-            System.out.println("\n--- ORDINE SUGGERITO ---");
-            for (OrderItemBean item : suggestedItems) {
-                System.out.println("- " + item.getPartName() + " x " + item.getQuantity());
-            }
+    private static boolean isNotificaOrdine(NotificationBean n) {
+        return n.getPartName() == null ||
+                (n.getMessage() != null &&
+                        (n.getMessage().contains("Ordine") || n.getMessage().contains("ORDINE CONSEGNATO")));
+    }
 
-            System.out.println("\nOpzioni:");
-            System.out.println("1. Conferma ordine suggerito");
-            System.out.println("2. Modifica ordine suggerito");
-            System.out.println("3. Annulla");
-            System.out.print("Scegli un'opzione: ");
+    private static boolean isNotificaScorte(NotificationBean n) {
+        return n.getPartName() != null &&
+                n.getMessage() != null &&
+                n.getMessage().contains("Scorte basse");
+    }
 
-            String choice = SCANNER.nextLine();
+    private static void gestisciOrdineSuggerito(String username, List<OrderItemBean> suggestedItems) {
+        if (suggestedItems.isEmpty()) return;
 
-            switch (choice) {
-                case "1" -> {
-                    // Conferma ordine suggerito (comportamento originale)
-                    String supplierName = selezionaFornitore(userBoundary.getUser(username));
-                    if (supplierName != null) {
-                        orderBoundary.createSuggestedOrder(username, suggestedItems, supplierName);
-                        System.out.println("Ordine suggerito creato con successo.");
-                    }
-                }
-                case "2" -> {
-                    // Modifica ordine suggerito (nuovo comportamento)
-                    List<OrderItemBean> modifiedItems = modificaOrdineSuggerito(suggestedItems);
-                    if (!modifiedItems.isEmpty()) {
-                        String supplierName = selezionaFornitore(userBoundary.getUser(username));
-                        if (supplierName != null) {
-                            orderBoundary.createSuggestedOrder(username, modifiedItems, supplierName);
-                            System.out.println("Ordine modificato creato con successo.");
-                        }
-                    } else {
-                        System.out.println("Nessun articolo nell'ordine. Ordine annullato.");
-                    }
-                }
-                case "3" -> System.out.println("Operazione annullata.");
-                default -> System.out.println("Opzione non valida.");
-            }
+        mostraArticoliSuggeriti(suggestedItems);
+        processaSceltaOrdineSuggerito(username, suggestedItems);
+    }
+
+    private static void mostraArticoliSuggeriti(List<OrderItemBean> suggestedItems) {
+        System.out.println("\n--- ORDINE SUGGERITO ---");
+        for (OrderItemBean item : suggestedItems) {
+            System.out.println("- " + item.getPartName() + " x " + item.getQuantity());
+        }
+
+        System.out.println("\nOpzioni:");
+        System.out.println("1. Conferma ordine suggerito");
+        System.out.println("2. Modifica ordine suggerito");
+        System.out.println("3. Annulla");
+        System.out.print("Scegli un'opzione: ");
+    }
+
+    private static void processaSceltaOrdineSuggerito(String username, List<OrderItemBean> suggestedItems) {
+        String choice = SCANNER.nextLine();
+
+        switch (choice) {
+            case "1" -> confermaOrdineSuggerito(username, suggestedItems);
+            case "2" -> modificaEConfermaOrdine(username, suggestedItems);
+            case "3" -> System.out.println(MSG_OPERAZIONE_ANNULLATA);
+            default -> System.out.println(MSG_OPZIONE_NON_VALIDA);
         }
     }
 
+    private static void confermaOrdineSuggerito(String username, List<OrderItemBean> suggestedItems) {
+        String supplierName = selezionaFornitore(userBoundary.getUser(username));
+        if (supplierName != null) {
+            orderBoundary.createSuggestedOrder(username, suggestedItems, supplierName);
+            System.out.println("Ordine suggerito creato con successo.");
+        }
+    }
 
+    private static void modificaEConfermaOrdine(String username, List<OrderItemBean> suggestedItems) {
+        List<OrderItemBean> modifiedItems = modificaOrdineSuggerito(suggestedItems);
+        if (!modifiedItems.isEmpty()) {
+            String supplierName = selezionaFornitore(userBoundary.getUser(username));
+            if (supplierName != null) {
+                orderBoundary.createSuggestedOrder(username, modifiedItems, supplierName);
+                System.out.println("Ordine modificato creato con successo.");
+            }
+        } else {
+            System.out.println("Nessun articolo nell'ordine. Ordine annullato.");
+        }
+    }
+
+    //METODO SCOMPOSTO per ridurre Cognitive Complexity
     private static List<OrderItemBean> modificaOrdineSuggerito(List<OrderItemBean> suggestedItems) {
+        List<OrderItemBean> modifiedItems = modificaArticoliEsistenti(suggestedItems);
+        return aggiungiNuoviArticoli(modifiedItems);
+    }
+
+    private static List<OrderItemBean> modificaArticoliEsistenti(List<OrderItemBean> suggestedItems) {
         List<OrderItemBean> modifiedItems = new ArrayList<>();
         List<PartBean> availableParts = inventoryBoundary.getAllParts();
 
@@ -263,82 +308,109 @@ public class GarageManagerViewCLI {
         System.out.println("Per ogni articolo, inserisci la nuova quantità (0 per rimuovere):");
 
         for (OrderItemBean originalItem : suggestedItems) {
-            while (true) {
-                System.out.printf("Articolo: %s | Quantità suggerita: %d | Nuova quantità: ",
-                        originalItem.getPartName(), originalItem.getQuantity());
-
-                try {
-                    int newQty = Integer.parseInt(SCANNER.nextLine());
-
-                    if (newQty > 0) {
-                        // Verifica che la parte esista
-                        boolean partExists = availableParts.stream()
-                                .anyMatch(part -> part.getName().equals(originalItem.getPartName()));
-
-                        if (!partExists) {
-                            System.out.println("ATTENZIONE: La parte '" + originalItem.getPartName() + "' non esiste più nell'inventario. Articolo rimosso.");
-                            break;
-                        }
-
-                        OrderItemBean modifiedItem = new OrderItemBean();
-                        modifiedItem.setPartName(originalItem.getPartName());
-                        modifiedItem.setQuantity(newQty);
-                        modifiedItems.add(modifiedItem);
-                        break;
-                    } else if (newQty == 0) {
-                        System.out.println("Articolo rimosso dall'ordine.");
-                        break;
-                    } else {
-                        System.out.println("La quantità deve essere >= 0.");
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Quantità non valida. Inserisci un numero.");
-                }
+            OrderItemBean modifiedItem = modificaSingoloArticolo(originalItem, availableParts);
+            if (modifiedItem != null) {
+                modifiedItems.add(modifiedItem);
             }
         }
-
-        // Possibilità di aggiungere nuovi articoli
-        System.out.println("\nVuoi aggiungere nuovi articoli all'ordine? (s/n): ");
-        if (SCANNER.nextLine().equalsIgnoreCase("s")) {
-            System.out.println("Parti disponibili nell'inventario:");
-            for (PartBean part : availableParts) {
-                System.out.println("  - " + part.getName());
-            }
-            System.out.println("Inserisci i nuovi articoli (nome vuoto per terminare):");
-
-            while (true) {
-                System.out.print("Nome parte: ");
-                String partName = SCANNER.nextLine().trim();
-                if (partName.isBlank()) break;
-
-                // Verifica che la parte esista
-                boolean partExists = availableParts.stream()
-                        .anyMatch(part -> part.getName().equals(partName));
-
-                if (!partExists) {
-                    System.out.println("ERRORE: La parte '" + partName + "' non esiste nell'inventario.");
-                    continue; // Riprova con un altro nome
-                }
-
-                System.out.print("Quantità: ");
-                try {
-                    int qty = Integer.parseInt(SCANNER.nextLine());
-                    if (qty > 0) {
-                        OrderItemBean newItem = new OrderItemBean();
-                        newItem.setPartName(partName);
-                        newItem.setQuantity(qty);
-                        modifiedItems.add(newItem);
-                        System.out.println("Articolo aggiunto: " + partName + " x " + qty);
-                    } else {
-                        System.out.println("La quantità deve essere > 0.");
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Quantità non valida.");
-                }
-            }
-        }
-
         return modifiedItems;
+    }
+
+    private static OrderItemBean modificaSingoloArticolo(OrderItemBean originalItem, List<PartBean> availableParts) {
+        while (true) {
+            System.out.printf("Articolo: %s | Quantità suggerita: %d | Nuova quantità: ",
+                    originalItem.getPartName(), originalItem.getQuantity());
+
+            try {
+                int newQty = Integer.parseInt(SCANNER.nextLine());
+                return gestisciQuantitaArticolo(originalItem, newQty, availableParts);
+            } catch (NumberFormatException _) {
+                System.out.println("Quantità non valida. Inserisci un numero.");
+            }
+        }
+    }
+
+    private static OrderItemBean gestisciQuantitaArticolo(OrderItemBean item, int newQty, List<PartBean> availableParts) {
+        if (newQty > 0) {
+            if (!verificaParteEsiste(item.getPartName(), availableParts)) {
+                System.out.println("ATTENZIONE: La parte '" + item.getPartName() + "' non esiste più nell'inventario. Articolo rimosso.");
+                return null;
+            }
+            OrderItemBean modifiedItem = new OrderItemBean();
+            modifiedItem.setPartName(item.getPartName());
+            modifiedItem.setQuantity(newQty);
+            return modifiedItem;
+        } else if (newQty == 0) {
+            System.out.println(MSG_ARTICOLO_RIMOSSO);
+            return null;
+        } else {
+            System.out.println("La quantità deve essere >= 0.");
+            return null;
+        }
+    }
+
+    private static boolean verificaParteEsiste(String partName, List<PartBean> availableParts) {
+        return availableParts.stream().anyMatch(part -> part.getName().equals(partName));
+    }
+
+    private static List<OrderItemBean> aggiungiNuoviArticoli(List<OrderItemBean> currentItems) {
+        System.out.println("\nVuoi aggiungere nuovi articoli all'ordine? (s/n): ");
+        if (!SCANNER.nextLine().equalsIgnoreCase("s")) {
+            return currentItems;
+        }
+
+        mostraPartiDisponibili();
+        return raccogliNuoviArticoli(currentItems);
+    }
+
+    private static void mostraPartiDisponibili() {
+        System.out.println("Parti disponibili nell'inventario:");
+        for (PartBean part : inventoryBoundary.getAllParts()) {
+            System.out.println("  - " + part.getName());
+        }
+        System.out.println("Inserisci i nuovi articoli (nome vuoto per terminare):");
+    }
+
+    private static List<OrderItemBean> raccogliNuoviArticoli(List<OrderItemBean> currentItems) {
+        List<OrderItemBean> result = new ArrayList<>(currentItems);
+
+        while (true) {
+            System.out.print("Nome parte: ");
+            String partName = SCANNER.nextLine().trim();
+
+            if (partName.isBlank()) {
+                break;
+            }
+
+            if (verificaParteEsiste(partName, inventoryBoundary.getAllParts())) {
+                OrderItemBean newItem = creaNuovoArticolo(partName);
+                if (newItem != null) {
+                    result.add(newItem);
+                }
+            } else {
+                System.out.println("ERRORE: La parte '" + partName + "' non esiste nell'inventario.");
+            }
+        }
+        return result;
+    }
+
+    private static OrderItemBean creaNuovoArticolo(String partName) {
+        System.out.print("Quantità: ");
+        try {
+            int qty = Integer.parseInt(SCANNER.nextLine());
+            if (qty > 0) {
+                OrderItemBean newItem = new OrderItemBean();
+                newItem.setPartName(partName);
+                newItem.setQuantity(qty);
+                System.out.println("Articolo aggiunto: " + partName + " x " + qty);
+                return newItem;
+            } else {
+                System.out.println("La quantità deve essere > 0.");
+            }
+        } catch (NumberFormatException _) {
+            System.out.println(MSG_QUANTITA_NON_VALIDA);
+        }
+        return null;
     }
 
     private static void handleVisualizzaOrdini() {
@@ -364,7 +436,7 @@ public class GarageManagerViewCLI {
     private static void handleImpostaFornitorePredefinito(String username) {
         List<SupplierBean> suppliers = supplierBoundary.getAllSuppliers();
         if (suppliers.isEmpty()) {
-            System.out.println("Nessun fornitore disponibile.");
+            System.out.println(MSG_NESSUN_FORNITORE);
             return;
         }
 

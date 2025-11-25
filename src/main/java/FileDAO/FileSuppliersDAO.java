@@ -2,19 +2,21 @@ package FileDAO;
 
 import DAO.SupplierDAO;
 import entity.SupplierEntity;
+import exception.FilePersistenceException;
+import exception.FileFormatException;
 import java.io.*;
 import java.util.*;
 
 public class FileSuppliersDAO implements SupplierDAO {
 
     private static final String FILE_PATH = "data/suppliers.txt";
-    private int nextId = 1;
 
     @Override
     public void saveSupplier(SupplierEntity supplier) {
         List<SupplierEntity> allSuppliers = getAllSuppliers();
 
         //Trova il prossimo ID disponibile
+        int nextId;
         if (allSuppliers.isEmpty()) {
             nextId = 1;
         } else {
@@ -30,7 +32,7 @@ public class FileSuppliersDAO implements SupplierDAO {
             writer.write(formatSupplier(supplier));
             writer.newLine();
         } catch (IOException e) {
-            throw new RuntimeException("Errore scrittura fornitore su file: " + e.getMessage(), e);
+            throw new FilePersistenceException("Errore scrittura fornitore su file: " + e.getMessage(), e);
         }
     }
 
@@ -43,7 +45,7 @@ public class FileSuppliersDAO implements SupplierDAO {
                 if (supplier.getName().equals(name)) return Optional.of(supplier);
             }
         } catch (IOException e) {
-            throw new RuntimeException("Errore lettura fornitore da file: " + e.getMessage(), e);
+            throw new FilePersistenceException("Errore lettura fornitore da file: " + e.getMessage(), e);
         }
         return Optional.empty();
     }
@@ -65,7 +67,7 @@ public class FileSuppliersDAO implements SupplierDAO {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException("Errore lettura fornitori da file: " + e.getMessage(), e);
+            throw new FilePersistenceException("Errore lettura fornitori da file: " + e.getMessage(), e);
         }
         return suppliers;
     }
@@ -95,14 +97,14 @@ public class FileSuppliersDAO implements SupplierDAO {
                 String email = !parts[1].isEmpty() ? parts[1] : null;
                 String phone = !parts[2].isEmpty() ? parts[2] : null;
                 boolean isDefault = Boolean.parseBoolean(parts[3]);
-                //Genera un ID temporaneo basato sull'hash del nome
-                int tempId = Math.abs(name.hashCode());
+                //Usa direttamente l'hash del nome
+                int tempId = name.hashCode();
                 return new SupplierEntity(tempId, name, email, phone, isDefault);
             } else {
-                throw new RuntimeException("Formato file fornitori non valido: " + line);
+                throw new FileFormatException("Formato file fornitori non valido: " + line);
             }
         } catch (NumberFormatException e) {
-            throw new RuntimeException("Errore parsing ID nel file fornitori: " + line, e);
+            throw new FileFormatException("Errore parsing ID nel file fornitori: " + line, e);
         }
     }
 }

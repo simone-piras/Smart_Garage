@@ -1,6 +1,7 @@
 package utils;
 import enumerations.PersistenceType;
 
+@SuppressWarnings("java:S6548") // Soppressione warning Singleton
 public class ApplicationContext {
 
     private static ApplicationContext instance;

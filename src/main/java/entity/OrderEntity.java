@@ -41,5 +41,5 @@ public class OrderEntity {
 
     // Metodi di compatibilità
     public String getSupplierName() { return supplier != null ? supplier.getName() : null; }
-    public String getOrderID() { return id; }
+    public String getOrderID() { return getId(); }
 }

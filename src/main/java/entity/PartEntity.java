@@ -33,5 +33,5 @@ public class PartEntity {
     public int getThreshold() { return threshold; }
     public void setThreshold(int threshold) { this.threshold = threshold; }
 
-    public int getReorderThreshold() { return threshold; }
+    public int getReorderThreshold() { return getThreshold(); }
 }

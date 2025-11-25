@@ -1,3 +1,5 @@
-1|admin|admin123|admin@garage.com|AutoRicambi S.p.A.
+1|admin|admin123|admin@garage.com|MeccanicaPlus
 2|utente|password|utente@email.com|
 3|s.piras.mag|google_oauth|s.piras.mag@gmail.com|
+4|fabri|fabrix|fabri@gmail.com|PartiVeloci
+5|tarta|ruga|tartaruga@gmail.com|PartiVeloci

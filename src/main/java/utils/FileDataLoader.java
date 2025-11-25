@@ -11,6 +11,7 @@ import exception.DuplicateUsernameException;
 
 import java.time.LocalDate;
 
+@SuppressWarnings("java:S106")  //Soppressione warning per System.out
 public class FileDataLoader {
 
     private final InventoryBoundary inventoryBoundary;
@@ -64,13 +65,13 @@ public class FileDataLoader {
     private void loadUsers() {
         try {
             userBoundary.registerUser("admin", "admin123", "admin@garage.com");
-        } catch (DuplicateUsernameException e) {
+        } catch (DuplicateUsernameException _) {
             // Utente già esistente
         }
 
         try {
             userBoundary.registerUser("utente", "password", "utente@email.com");
-        } catch (DuplicateUsernameException e) {
+        } catch (DuplicateUsernameException _) {
             // Utente già esistente
         }
     }

@@ -1,8 +1,18 @@
 package cli;
 import java.util.Scanner;
 
+/*
+ Utilizza System.out per l'interazione utente in ambiente CLI.
+ In un'applicazione CLI, System.out è lo standard per l'output utente.
+ L'uso di logger sarebbe inappropriato per l'interazione diretta con l'utente.
+ */
+@SuppressWarnings("java:S106")
 public class MainViewCLI {
     private final Scanner scanner = new Scanner(System.in);
+
+    //COSTANTI PER RISOLVERE GLI ISSUE
+    private static final String PROMPT_SCELTA = "Scelta: ";
+    private static final String MSG_SCELTA_NON_VALIDA = "Scelta non valida.";
 
     public void start() {
         while (true) {
@@ -10,7 +20,7 @@ public class MainViewCLI {
             System.out.println("1. Login");
             System.out.println("2. Registrazione");
             System.out.println("0. Esci");
-            System.out.print("Scelta: ");
+            System.out.print(PROMPT_SCELTA);
 
             String input = scanner.nextLine();
 
@@ -25,7 +35,7 @@ public class MainViewCLI {
                     System.out.println("Uscita dall'applicazione. Arrivederci!");
                     return;
                 default:
-                    System.out.println("Scelta non valida. Riprova.");
+                    System.out.println(MSG_SCELTA_NON_VALIDA + " Riprova.");
             }
         }
     }
@@ -35,7 +45,7 @@ public class MainViewCLI {
         System.out.println("1. Login con Google");
         System.out.println("2. Login Locale");
         System.out.println("0. Indietro");
-        System.out.print("Scelta: ");
+        System.out.print(PROMPT_SCELTA);
         String choice = scanner.nextLine();
 
         switch (choice) {
@@ -48,7 +58,7 @@ public class MainViewCLI {
             case "0":
                 return;
             default:
-                System.out.println("Scelta non valida.");
+                System.out.println(MSG_SCELTA_NON_VALIDA);
         }
     }
 
@@ -57,7 +67,7 @@ public class MainViewCLI {
         System.out.println("1. Registrazione con Google");
         System.out.println("2. Registrazione Locale");
         System.out.println("0. Indietro");
-        System.out.print("Scelta: ");
+        System.out.print(PROMPT_SCELTA);
         String choice = scanner.nextLine();
 
         switch (choice) {
@@ -70,7 +80,7 @@ public class MainViewCLI {
             case "0":
                 return;
             default:
-                System.out.println("Scelta non valida.");
+                System.out.println(MSG_SCELTA_NON_VALIDA);
         }
     }
 }

@@ -11,6 +11,15 @@ import java.util.List;
 
 public class InventoryBoundary {
     private final InventoryManager inventoryManager;
+
+    /*
+     NotificationManager è mantenuto per garantire che InventoryManager
+     utilizzi la stessa istanza condivisa tramite Singleton.
+     InventoryManager lo usa internamente via Observer pattern poichè lo registra come osservatore e lo usa
+     direttamente in checkThreshold().
+     Rimuoverlo causerebbe istanze separate e inconsistenza delle notifiche.
+     */
+    @SuppressWarnings("java:S1068") // Field is essential for Observer pattern consistency
     private final NotificationManager notificationManager;
 
     /*

@@ -16,12 +16,18 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import exception.GoogleLoginException;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.util.List;
 
+/*
+ System.out utilizzato per l'interazione utente durante l'autenticazione OAuth.
+ In un flusso di autenticazione interattivo, l'output diretto all'utente è appropriato.
+ */
+@SuppressWarnings("java:S106")
 public class GoogleLoginManager {
 
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
@@ -33,7 +39,7 @@ public class GoogleLoginManager {
 
         InputStream in = GoogleLoginManager.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
         if (in == null) {
-            throw new RuntimeException("File credentials.json non trovato");
+            throw new GoogleLoginException("File credentials.json non trovato");
         }
 
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
@@ -54,7 +60,8 @@ public class GoogleLoginManager {
         Credential credential = flow.loadCredential(userId);
 
         // Verifica se il token è valido
-        if (credential == null || credential.getAccessToken() == null || credential.refreshToken() == false) {
+        if (credential == null || credential.getAccessToken() == null || !credential.refreshToken()) {
+
             System.out.println("Token scaduto o revocato. Avvio nuovo login Google...");
             credential = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize(userId);
         }

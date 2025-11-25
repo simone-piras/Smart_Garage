@@ -37,11 +37,9 @@ public class InMemoryUserDAO implements UserDAO {
 
     @Override
     public void updateDefaultSupplier(String username, String supplierName) {
-        UserEntity user = userStorage.get(username);
-        if (user != null) {
-            UserEntity updated = new UserEntity(user.getId(), user.getUsername(), user.getEmail(),
-                    user.getPassword(), supplierName);
-            userStorage.put(username, updated);
-        }
+        userStorage.computeIfPresent(username, (key, user) ->
+                new UserEntity(user.getId(), user.getUsername(), user.getEmail(),
+                        user.getPassword(), supplierName)
+        );
     }
 }

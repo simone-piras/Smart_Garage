@@ -6,6 +6,7 @@ import entity.SupplierEntity;
 import entity.OrderItemEntity;
 import entity.PartEntity;
 import utils.DBConnection;
+import exception.DatabaseOperationException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,6 +14,13 @@ import java.util.List;
 import java.util.Optional;
 
 public class DatabaseOrderDAO implements OrderDAO {
+
+
+    private static final String COLUMN_ID = "id";
+    private static final String COLUMN_SUPPLIER_NAME = "supplier_name";
+    private static final String COLUMN_STATUS = "status";
+    private static final String COLUMN_PART_NAME = "part_name";
+    private static final String COLUMN_QUANTITY = "quantity";
 
     @Override
     public void saveOrder(OrderEntity order) {
@@ -28,7 +36,7 @@ public class DatabaseOrderDAO implements OrderDAO {
             saveOrderItems(order.getId(), order.getItems(), conn);
 
         } catch (SQLException e) {
-            throw new RuntimeException("Errore nel salvataggio ordine: " + e.getMessage(), e);
+            throw new DatabaseOperationException("Errore nel salvataggio ordine: " + e.getMessage(), e);
         }
     }
 
@@ -37,8 +45,9 @@ public class DatabaseOrderDAO implements OrderDAO {
 
         String sql = "INSERT INTO order_items (order_id, part_name, quantity) VALUES (?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, orderId);
+
             for (OrderItemEntity item : items) {
-                ps.setString(1, orderId);
                 ps.setString(2, item.getPartName());
                 ps.setInt(3, item.getQuantity());
                 ps.addBatch();
@@ -49,8 +58,8 @@ public class DatabaseOrderDAO implements OrderDAO {
 
     @Override
     public Optional<OrderEntity> getOrderByID(String orderID) {
-        // ✅ MODIFICA: Rimuovi 'date' dalla query se non esiste nel DB
-        String sql = "SELECT * FROM orders WHERE id = ?";
+        // 👇 MODIFICATO: SELECT specifico invece di SELECT *
+        String sql = "SELECT id, supplier_name, status FROM orders WHERE id = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -59,7 +68,7 @@ public class DatabaseOrderDAO implements OrderDAO {
 
             if (rs.next()) {
                 SupplierEntity supplier = null;
-                String supplierName = rs.getString("supplier_name");
+                String supplierName = rs.getString(COLUMN_SUPPLIER_NAME);
                 if (supplierName != null) {
                     supplier = new SupplierEntity(supplierName, null, null, false);
                 }
@@ -69,15 +78,15 @@ public class DatabaseOrderDAO implements OrderDAO {
                 OrderEntity order = new OrderEntity(
                         supplier,
                         items,
-                        rs.getString("status"),
-                        null // ✅ Imposta date a null se non esiste nel DB
+                        rs.getString(COLUMN_STATUS),
+                        null
                 );
-                order.setId(rs.getString("id"));
+                order.setId(rs.getString(COLUMN_ID));
 
                 return Optional.of(order);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Errore nel recupero ordine: " + e.getMessage(), e);
+            throw new DatabaseOperationException("Errore nel recupero ordine: " + e.getMessage(), e);
         }
         return Optional.empty();
     }
@@ -91,8 +100,8 @@ public class DatabaseOrderDAO implements OrderDAO {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                String partName = rs.getString("part_name");
-                int quantity = rs.getInt("quantity");
+                String partName = rs.getString(COLUMN_PART_NAME);
+                int quantity = rs.getInt(COLUMN_QUANTITY);
 
                 PartEntity part = new PartEntity(partName, 0, 0);
                 OrderItemEntity item = new OrderItemEntity(part, quantity, null);
@@ -112,11 +121,11 @@ public class DatabaseOrderDAO implements OrderDAO {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                getOrderByID(rs.getString("id"))
+                getOrderByID(rs.getString(COLUMN_ID))
                         .ifPresent(orders::add);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Errore nel recupero ordini: " + e.getMessage(), e);
+            throw new DatabaseOperationException("Errore nel recupero ordini: " + e.getMessage(), e);
         }
         return orders;
     }
@@ -140,7 +149,7 @@ public class DatabaseOrderDAO implements OrderDAO {
                 return ps.executeUpdate() > 0;
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Errore nell'eliminazione ordine: " + e.getMessage(), e);
+            throw new DatabaseOperationException("Errore nell'eliminazione ordine: " + e.getMessage(), e);
         }
     }
 

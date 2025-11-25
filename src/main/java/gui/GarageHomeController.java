@@ -44,8 +44,6 @@ public class GarageHomeController {
         }
     }
 
-
-
     // NAVIGAZIONE
     @FXML private void goToHome(ActionEvent event) { /* già nella home */ }
     @FXML private void goToInventory(ActionEvent event) { loadView("/fxml/inventoryView.fxml", event); }
@@ -60,15 +58,21 @@ public class GarageHomeController {
             Parent root = loader.load();
 
             Object controller = loader.getController();
-            try {
-                controller.getClass()
-                        .getMethod("initData", String.class, InventoryManager.class, NotificationManager.class)
-                        .invoke(controller, loggedUsername, inventoryManager, notificationManager);
-            } catch (NoSuchMethodException ignored) {}
+            invokeInitDataMethod(controller);
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.show();
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    private void invokeInitDataMethod(Object controller) {
+        try {
+            controller.getClass()
+                    .getMethod("initData", String.class, InventoryManager.class, NotificationManager.class)
+                    .invoke(controller, loggedUsername, inventoryManager, notificationManager);
+        } catch (NoSuchMethodException _) {
+            // Il controller non ha il metodo initData, è normale per alcune viste
         } catch (Exception e) { e.printStackTrace(); }
     }
 

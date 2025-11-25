@@ -5,6 +5,8 @@ import entity.OrderEntity;
 import entity.OrderItemEntity;
 import entity.SupplierEntity;
 import entity.PartEntity;
+import exception.FilePersistenceException;
+
 import java.io.*;
 import java.util.*;
 
@@ -18,7 +20,7 @@ public class FileOrderDAO implements OrderDAO {
             writer.write(formatOrder(order));
             writer.newLine();
         } catch (IOException e) {
-            throw new RuntimeException("Errore scrittura ordine su file: " + e.getMessage(), e);
+            throw new FilePersistenceException("Errore scrittura ordine su file: " + e.getMessage(), e);
         }
     }
 
@@ -31,7 +33,7 @@ public class FileOrderDAO implements OrderDAO {
                 if (order.getId().equals(orderID)) return Optional.of(order); //Confronta String direttamente
             }
         } catch (IOException e) {
-            throw new RuntimeException("Errore lettura ordine da file: " + e.getMessage(), e);
+            throw new FilePersistenceException("Errore lettura ordine da file: " + e.getMessage(), e);
         }
         return Optional.empty();
     }
@@ -43,7 +45,7 @@ public class FileOrderDAO implements OrderDAO {
             String line;
             while ((line = reader.readLine()) != null) orders.add(parseOrder(line));
         } catch (IOException e) {
-            throw new RuntimeException("Errore lettura ordini da file: " + e.getMessage(), e);
+            throw new FilePersistenceException("Errore lettura ordini da file: " + e.getMessage(), e);
         }
         return orders;
     }
@@ -125,7 +127,7 @@ public class FileOrderDAO implements OrderDAO {
                 writer.newLine();
             }
         } catch (IOException e) {
-            throw new RuntimeException("Errore riscrittura file ordini: " + e.getMessage(), e);
+            throw new FilePersistenceException("Errore riscrittura file ordini: " + e.getMessage(), e);
         }
     }
 }

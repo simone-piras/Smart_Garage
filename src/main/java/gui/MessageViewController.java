@@ -34,6 +34,19 @@ public class MessageViewController implements Observer {
     private NotificationManager notificationManager;
     private NotificationBoundary notificationBoundary;
 
+    /*
+    I metodi initData vengono chiamati dinamicamente tramite reflection quando l'utente naviga tra
+    le diverse viste dell'applicazione.
+    i controller delle varie schermate ricevono i dati necessari (username, manager, etc.) al momento della loro creazione.
+    Esempio pratico:
+    Utente clicca su "INVENTORY" in GarageHomeController
+    Viene chiamato goToInventory(event)
+    Questo chiama loadView("/fxml/inventoryView.fxml", event)
+    JavaFX carica il FXML e crea il InventoryViewController
+    Tramite reflection viene chiamato initData(username, inventoryManager, notificationManager)
+    Il controller ora ha tutti i dati necessari per funzionare
+    DYNAMIC BINDING: I controller vengono caricati dinamicamente a runtime
+     */
     public void initData(String username, InventoryManager manager, NotificationManager nManager) {
         this.loggedUsername = username;
         this.inventoryManager = manager;
@@ -56,6 +69,17 @@ public class MessageViewController implements Observer {
         List<NotificationBean> orderNotifications = new ArrayList<>();
         List<NotificationBean> stockNotifications = new ArrayList<>();
 
+        categorizeNotifications(notifications, orderNotifications, stockNotifications);
+
+        displayOrderNotifications(orderNotifications);
+        displayStockNotifications(stockNotifications);
+        displaySuggestedOrder();
+        displayEmptyMessageIfNeeded(notifications);
+    }
+
+    private void categorizeNotifications(List<NotificationBean> notifications,
+                                         List<NotificationBean> orderNotifications,
+                                         List<NotificationBean> stockNotifications) {
         for (NotificationBean n : notifications) {
             //NOTIFICHE ORDINI: partName = null OPPURE messaggio contiene "Ordine"
             if (n.getPartName() == null ||
@@ -70,8 +94,9 @@ public class MessageViewController implements Observer {
                 stockNotifications.add(n);
             }
         }
+    }
 
-        // NOTIFICHE ORDINI
+    private void displayOrderNotifications(List<NotificationBean> orderNotifications) {
         if (!orderNotifications.isEmpty()) {
             Label orderTitle = new Label("NOTIFICHE ORDINI");
             orderTitle.setStyle("-fx-font-weight: bold; -fx-font-size: 16; -fx-text-fill: #0066cc;");
@@ -85,8 +110,9 @@ public class MessageViewController implements Observer {
             }
             messagesBox.getChildren().add(new Label("")); // Spazio
         }
+    }
 
-        // NOTIFICHE SCORTE
+    private void displayStockNotifications(List<NotificationBean> stockNotifications) {
         if (!stockNotifications.isEmpty()) {
             Label stockTitle = new Label("NOTIFICHE SCORTE");
             stockTitle.setStyle("-fx-font-weight: bold; -fx-font-size: 16; -fx-text-fill: #cc0000;");
@@ -100,8 +126,9 @@ public class MessageViewController implements Observer {
             }
             messagesBox.getChildren().add(new Label("")); // Spazio
         }
+    }
 
-        // ORDINE SUGGERITO
+    private void displaySuggestedOrder() {
         List<OrderItemBean> suggestedOrder = notificationBoundary.getSuggestedOrderItems();
         if (!suggestedOrder.isEmpty()) {
             Label orderTitle = new Label("ORDINE SUGGERITO");
@@ -129,8 +156,10 @@ public class MessageViewController implements Observer {
             buttonsBox.getChildren().addAll(confirmBtn, modifyBtn);
             messagesBox.getChildren().add(buttonsBox);
         }
+    }
 
-        // MESSAGGIO VUOTO
+    private void displayEmptyMessageIfNeeded(List<NotificationBean> notifications) {
+        List<OrderItemBean> suggestedOrder = notificationBoundary.getSuggestedOrderItems();
         if (notifications.isEmpty() && suggestedOrder.isEmpty()) {
             Label emptyLabel = new Label("Nessuna notifica presente");
             emptyLabel.setStyle("-fx-font-style: italic; -fx-text-fill: gray; -fx-padding: 20 0 0 0;");
@@ -169,7 +198,7 @@ public class MessageViewController implements Observer {
     @FXML private void goToHome(ActionEvent event) { loadView("/fxml/GarageHomeView.fxml", event); }
     @FXML private void goToInventory(ActionEvent event) { loadView("/fxml/InventoryView.fxml", event); }
     @FXML private void goToOrder(ActionEvent event) { loadOrderViewWithParams(event, new ArrayList<>(notificationBoundary.getAllNotifications()), false); }
-    @FXML private void goToMessages(ActionEvent event) { /* già qui */ }
+    @FXML private void goToMessages(ActionEvent event) { /* già qui - nessuna azione necessaria */ }
     @FXML private void goBack(ActionEvent event) { loadView("/fxml/GarageHomeView.fxml", event); }
 
     @FXML private void handleLogout(ActionEvent event) {
@@ -196,14 +225,20 @@ public class MessageViewController implements Observer {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
             Object controller = loader.getController();
-            try {
-                controller.getClass()
-                        .getMethod("initData", String.class, InventoryManager.class, NotificationManager.class)
-                        .invoke(controller, loggedUsername, inventoryManager, notificationManager);
-            } catch (NoSuchMethodException ignored) {}
+            invokeInitDataMethod(controller);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.show();
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    private void invokeInitDataMethod(Object controller) {
+        try {
+            controller.getClass()
+                    .getMethod("initData", String.class, InventoryManager.class, NotificationManager.class)
+                    .invoke(controller, loggedUsername, inventoryManager, notificationManager);
+        } catch (NoSuchMethodException _) {
+            // Il controller non ha il metodo initData, è normale per alcune viste
         } catch (Exception e) { e.printStackTrace(); }
     }
 
