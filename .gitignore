@@ -39,3 +39,6 @@ build/
 
 ## root properties ##
 src/main/resources/db.properties
+src/main/resources/credentials.json
+token/
+StoredCredential
