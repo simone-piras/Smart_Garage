@@ -7,20 +7,18 @@ import exception.PartNotFoundException;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import boundary.InventoryBoundary;
 import boundary.OrderBoundary;
 import boundary.SupplierBoundary;
 import boundary.UserBoundary;
 import controller.InventoryManager;
 import controller.NotificationManager;
+import utils.NavigationUtility;
+import utils.AlertUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -358,65 +356,47 @@ public class OrderViewController {
 
     }
 
-    // NAVIGAZIONE
-    private void loadView(String fxmlPath, ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-            Parent root = loader.load();
-            Object controller = loader.getController();
-
-            invokeInitDataMethods(controller);
-
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    // NAVIGAZIONE - MODIFICATO PER USARE LE UTILITY
+    @FXML private void goToHome(ActionEvent e) {
+        NavigationUtility.loadView("/fxml/GarageHomeView.fxml", e, loggedUsername, inventoryManager, notificationManager);
     }
 
-    private void invokeInitDataMethods(Object controller) {
-        try {
-            controller.getClass()
-                    .getMethod("initData", String.class, InventoryManager.class, NotificationManager.class)
-                    .invoke(controller, loggedUsername, inventoryManager, notificationManager);
-        } catch (NoSuchMethodException _) {
-            // Il controller non ha questo metodo, è normale
-        } catch (Exception e) { e.printStackTrace(); }
-
-        try {
-            controller.getClass()
-                    .getMethod("initData", String.class, InventoryManager.class, NotificationManager.class, List.class, boolean.class)
-                    .invoke(controller, loggedUsername, inventoryManager, notificationManager, suggestedOrder, editMode);
-        } catch (NoSuchMethodException _) {
-            // Il controller non ha questo metodo, è normale
-        } catch (Exception e) { e.printStackTrace(); }
+    @FXML private void goToInventory(ActionEvent e) {
+        NavigationUtility.loadView("/fxml/inventoryView.fxml", e, loggedUsername, inventoryManager, notificationManager);
     }
 
-    @FXML private void goToHome(ActionEvent e) { loadView("/fxml/GarageHomeView.fxml", e); }
-    @FXML private void goToInventory(ActionEvent e) { loadView("/fxml/inventoryView.fxml", e); }
-    @FXML private void goToOrder(ActionEvent e) { loadView("/fxml/orderView.fxml", e); }
-    @FXML private void goToMessages(ActionEvent e) { loadView("/fxml/messagesView.fxml", e); }
-    @FXML private void goBack(ActionEvent e) { loadView("/fxml/GarageHomeView.fxml", e); }
+    @FXML private void goToOrder(ActionEvent e) {
+        NavigationUtility.loadView("/fxml/orderView.fxml", e, loggedUsername, inventoryManager, notificationManager);
+    }
+
+    @FXML private void goToMessages(ActionEvent e) {
+        NavigationUtility.loadView("/fxml/messagesView.fxml", e, loggedUsername, inventoryManager, notificationManager);
+    }
+
+    @FXML private void goBack(ActionEvent e) {
+        NavigationUtility.loadView("/fxml/GarageHomeView.fxml", e, loggedUsername, inventoryManager, notificationManager);
+    }
 
     @FXML private void handleLogout(ActionEvent event) {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/mainView1.fxml"));
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Smart Garage");
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        NavigationUtility.handleLogout(event);
     }
 
     @FXML private void handleClose(ActionEvent e) { Platform.exit(); }
+
     @FXML private void toggleSideMenu() { sideMenu.setVisible(!sideMenu.isVisible()); }
 
     private void showAlert(Alert.AlertType type, String message) {
-        Alert alert = new Alert(type);
-        alert.setContentText(message);
-        alert.showAndWait();
+        switch (type) {
+            case ERROR:
+                AlertUtility.showError(message);
+                break;
+            case WARNING:
+                AlertUtility.showWarning(message);
+                break;
+            case INFORMATION:
+            default:
+                AlertUtility.showInfo(message);
+                break;
+        }
     }
 }
