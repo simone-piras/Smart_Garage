@@ -30,5 +30,4 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Build and analyze
-        run: |
-          mvn -B clean verify sonar:sonar -Dsonar.projectKey=simone-piras_Smart_Garage -Dsonar.organization=simone-piras -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=${{ secrets.SONAR_TOKEN }} -Dsonar.coverage.jacoco.xmlReportPaths= -Dsonar.junit.reportsPath=
+        run: mvn -B clean verify  
