@@ -32,4 +32,5 @@ jobs:
       - name: Build and analyze
         run: |
          mvn -B clean verify
+         mvn sonar:sonar \-Dsonar.host.url=https://sonarcloud.io \
          mvn sonar:sonar -Dsonar.token=${{ secrets.SONAR_TOKEN }}
