@@ -19,7 +19,7 @@ import utils.SharedManagers;
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
 
-@SuppressWarnings("java:S106")  //Soppressione warning per System.out
+@SuppressWarnings("java:S106")  //Soppressione warning per System.out/System.err
 public class LoginViewController {
 
     private final UserBoundary userBoundary = new UserBoundary();
@@ -70,7 +70,7 @@ public class LoginViewController {
                 stage.setTitle("Your Garage");
                 stage.show();
             } catch (Exception e) {
-                e.printStackTrace();
+                System.err.println("Errore durante il login: " + e.getMessage());
             }
         } else {
             showError("Credenziali errate o account non registrato");
@@ -109,7 +109,7 @@ public class LoginViewController {
             stage.show();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Errore durante il login con Google: " + e.getMessage());
             showError("Errore durante il login con Google.");
         }
     }
@@ -136,7 +136,7 @@ public class LoginViewController {
             stage.setScene(new Scene(root));
             stage.setTitle("Smart Garage");
         } catch(Exception e) {
-            e.printStackTrace();
+            System.err.println("Errore: " + e.getMessage());
         }
     }
 }

@@ -2,3 +2,5 @@
 63c7459d|MeccanicaPlus|Delivered|null|Filtro Aria:4,Filtro Olio:7,Pastiglie Freno:8
 a5f4df39|MeccanicaPlus|Delivered|null|Candele:10,Cinghia Distribuzione:10,Lampadina Faro:10,Filtro Olio:6
 cf9ffe0e|MeccanicaPlus|Delivered|null|Lampadina Faro:14
+66f4c0d8|MeccanicaPlus|Delivered|null|Candele:10,Fanale Posteriore:10
+51e6def5|MeccanicaPlus|Delivered|null|Candele:33

@@ -19,6 +19,7 @@ import utils.NavigationUtility;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("java:S106")//per System.err
 public class MessageViewController implements Observer {
 
     @FXML private Label usernameLabel;
@@ -168,7 +169,7 @@ public class MessageViewController implements Observer {
             NavigationUtility.loadOrderViewWithParams(event, loggedUsername, inventoryManager, notificationManager,
                     new ArrayList<>(notificationBoundary.getAllNotifications()), editMode);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Errore nel caricamento ordine suggerito: " + e.getMessage());
         }
     }
 

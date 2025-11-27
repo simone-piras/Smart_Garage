@@ -2,9 +2,9 @@
 0|Filtro Aria|217|3
 0|Pastiglie Freno|134|5
 0|Olio Motore|207|4
-0|Candele|13|3
+0|Candele|46|3
 0|Batteria Auto|53|2
-0|Fanale Posteriore|15|2
+0|Fanale Posteriore|12|2
 0|Cinghia Distribuzione|14|4
 0|Liquido Freni|15|5
 0|Lampadina Faro|15|3

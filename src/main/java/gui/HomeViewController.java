@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.event.ActionEvent;
 
+@SuppressWarnings("java:S106")//per System.err
 public class HomeViewController {
 
     @FXML private Button loginButton;
@@ -41,7 +42,7 @@ public class HomeViewController {
             stage.setTitle(title);
             stage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Errore nel caricamento della vista: " + e.getMessage());
         }
     }
 }

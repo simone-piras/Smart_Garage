@@ -66,7 +66,7 @@ public class RegistrationViewController {
             pause.setOnFinished(e -> switchToMainView(event));
             pause.play();
         } catch (DuplicateUsernameException _) {
-                System.out.println("Utente già esistente");
+                System.err.println("Utente già esistente durante registrazione Google");
                 showError("Username già registrato con Google", event);
 
         } catch (Exception e) {
@@ -93,7 +93,7 @@ public class RegistrationViewController {
             stage.setScene(new Scene(root));
             stage.setTitle("Smart Garage");
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Errore nel caricamento main view: " + e.getMessage());
         }
     }
 
