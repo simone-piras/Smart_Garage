@@ -1,6 +1,7 @@
-5abf20f5|MeccanicaPlus|Delivered|null|Filtro Aria:1
-63c7459d|MeccanicaPlus|Delivered|null|Filtro Aria:4,Filtro Olio:7,Pastiglie Freno:8
-a5f4df39|MeccanicaPlus|Delivered|null|Candele:10,Cinghia Distribuzione:10,Lampadina Faro:10,Filtro Olio:6
-cf9ffe0e|MeccanicaPlus|Delivered|null|Lampadina Faro:14
-66f4c0d8|MeccanicaPlus|Delivered|null|Candele:10,Fanale Posteriore:10
-51e6def5|MeccanicaPlus|Delivered|null|Candele:33
+e02c59b2|Distribuzione Auto Srl|Delivered|null|Filtro Aria:5,Candele:8
+f6d190e4|Distribuzione Auto Srl|Delivered|null|Fanale Posteriore:10,Cinghia Distribuzione:10,Lampadina Faro:2
+3afbf05d|Distribuzione Auto Srl|Delivered|null|Pastiglie Freno:1,Filtro Olio:1,Filtro Aria:1,Candele:34
+c188fbc4|Distribuzione Auto Srl|Delivered|null|Fanale Posteriore:11
+e5b1abe5|AutoRicambi S.p.A.|Delivered|null|Filtro Olio:4,Candele:6
+8bba3db8|AutoRicambi S.p.A.|Delivered|null|Fanale Posteriore:10,Cinghia Distribuzione:10
+df9aa3e1|AutoRicambi S.p.A.|Delivered|null|Liquido Freni:10,Batteria Auto:3

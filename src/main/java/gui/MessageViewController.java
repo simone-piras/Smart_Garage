@@ -25,6 +25,7 @@ public class MessageViewController implements Observer {
     @FXML private Label usernameLabel;
     @FXML private VBox sideMenu;
     @FXML private VBox messagesBox;
+    @FXML private Button refreshButton;
 
     private String loggedUsername;
     private InventoryManager inventoryManager;

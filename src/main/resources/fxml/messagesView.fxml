@@ -50,7 +50,7 @@
                     </font>
                 </Label>
 
-                <Button layoutX="458.0" layoutY="87.0" mnemonicParsing="false" style="-fx-background-color: RED; -fx-text-fill: black;" text="🔄 Refresh" />
+                <Button layoutX="458.0" layoutY="87.0" mnemonicParsing="false" onAction="#handleRefresh" style="-fx-background-color: RED; -fx-text-fill: black;" text="🔄 Refresh" />
 
                 <!--Usa VBox principale invece di AnchorPane!! -->
                 <VBox layoutX="202.0" layoutY="118.0" prefWidth="843.0" spacing="10.0">
@@ -66,7 +66,7 @@
                             </content>
                         </ScrollPane>
 
-                        <!-- ✅ Contenuto sotto la ScrollPane (immagine e label) -->
+                        <!--  Contenuto sotto la ScrollPane (immagine e label) -->
                         <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: #f0f0f0; -fx-padding: 10;">
                             <children>
                                 <ImageView fitHeight="60.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
