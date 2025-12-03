@@ -54,7 +54,7 @@
             <version>8.0.33</version>
         </dependency>
 
-        <!-- JavaFX (compatibile con JDK 23) -->
+        <!-- JavaFX -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>

@@ -2,6 +2,7 @@ package utils;
 
 import bean.NotificationBean;
 import bean.PartBean;
+import bean.UserBean;
 import boundary.InventoryBoundary;
 import boundary.SupplierBoundary;
 import boundary.UserBoundary;
@@ -23,8 +24,8 @@ public abstract class AbstractDataLoader {
         this.notificationManager = SharedManagers.getInstance().getNotificationManager();
     }
 
-    // Metodi comuni a tutti i DataLoader
     protected void loadCommonParts() {
+        // I pezzi vengono salvati per l'utente attualmente loggato
         inventoryBoundary.addOrUpdatePart("Filtro Olio", 10, 5);
         inventoryBoundary.addOrUpdatePart("Filtro Aria", 4, 3);
         inventoryBoundary.addOrUpdatePart("Pastiglie Freno", 2, 5);
@@ -56,9 +57,17 @@ public abstract class AbstractDataLoader {
         } catch (DuplicateUsernameException _) {
             // Utente già esistente
         }
+
+        //Logghiamo l'admin per poter caricare i dati!
+        // Senza questo, i DAO fallirebbero perché non c'è un utente in sessione.
+        UserBean adminUser = new UserBean();
+        adminUser.setUsername("admin");
+        adminUser.setEmail("admin@garage.com");
+        SessionManager.getInstance().login(adminUser);
     }
 
     protected void generateCommonNotifications() {
+        // Funziona solo se c'è un utente loggato (admin)
         for (PartBean part : inventoryBoundary.getAllParts()) {
             if (part.getQuantity() <= part.getReorderThreshold()) {
                 String message = "Scorte basse per la parte: " + part.getName() +

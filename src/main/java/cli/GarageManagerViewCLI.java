@@ -4,6 +4,7 @@ import bean.*;
 import boundary.*;
 import exception.InsufficientStockException;
 import exception.PartNotFoundException;
+import utils.SessionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,12 +41,14 @@ public class GarageManagerViewCLI {
             "5. Visualizza notifiche",
             "6. Visualizza ordini effettuati",
             "7. Imposta fornitore predefinito",
-            "8. Torna al Menu Principale"
+            "8. Logout e Torna al Menu Principale"
     };
 
     private GarageManagerViewCLI() {}
 
     public static void start(String username) {
+        // Appena l'utente entra, controlliamo se ha scorte basse e generiamo notifiche
+        inventoryBoundary.scanInventoryForLowStock();
         boolean exit = false;
         while (!exit) {
             printMenu();
@@ -58,7 +61,11 @@ public class GarageManagerViewCLI {
                 case "5" -> handleVisualizzaNotifiche(username);
                 case "6" -> handleVisualizzaOrdini();
                 case "7" -> handleImpostaFornitorePredefinito(username);
-                case "8" -> exit = true;
+                case "8" ->{
+                    System.out.println("Effettuo logout...");
+                    SessionManager.getInstance().logout();
+                    exit = true;
+                }
                 default -> System.out.println(MSG_OPZIONE_NON_VALIDA);
             }
         }

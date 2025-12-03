@@ -2,6 +2,7 @@ package mapper;
 
 import bean.NotificationBean;
 import entity.NotificationEntity;
+import utils.SessionManager;
 
 public class NotificationMapper implements BeanEntityMapper<NotificationBean, NotificationEntity> {
 
@@ -27,13 +28,17 @@ public class NotificationMapper implements BeanEntityMapper<NotificationBean, No
     public NotificationEntity toEntity(NotificationBean bean) {
         if (bean == null) return null;
 
+        // RECUPERO L'UTENTE LOGGATO
+        String currentUser = SessionManager.getInstance().getCurrentUser().getUsername();
+
         return new NotificationEntity(
                 bean.getMessage(),
                 bean.getDate(),
                 bean.getPartName(),
                 bean.isHasSuggestedOrder(),
                 bean.getSuggestedQuantity(),
-                bean.getRelatedOrder() != null ? new OrderMapper().toEntity(bean.getRelatedOrder()) : null
+                bean.getRelatedOrder() != null ? new OrderMapper().toEntity(bean.getRelatedOrder()) : null,
+                currentUser
         );
     }
 }

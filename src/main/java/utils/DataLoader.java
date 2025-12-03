@@ -1,6 +1,5 @@
 package utils;
 
-
 public class DataLoader extends AbstractDataLoader {
 
     public DataLoader() {
@@ -9,14 +8,16 @@ public class DataLoader extends AbstractDataLoader {
 
     @Override
     public void load() {
-        loadCommonParts();
-        loadCommonSuppliers();
-        loadCommonUsers();
+        loadCommonUsers(); //Crea utenti e LOGGA come admin
 
-        // Logica specifica di DataLoader
-        if (!notificationManager.getAllNotifications().isEmpty()) {
-            return; // Notifiche già generate
+        loadCommonSuppliers(); // Carica fornitori
+        loadCommonParts();     // Carica pezzi (assegnandoli all'admin)
+
+        if (notificationManager.getAllNotifications().isEmpty()) {
+            generateCommonNotifications();
         }
-        generateCommonNotifications();
+
+        //Logout alla fine del caricamento
+        SessionManager.getInstance().logout();
     }
 }

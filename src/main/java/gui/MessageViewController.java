@@ -200,10 +200,13 @@ public class MessageViewController implements Observer {
     }
 
     @FXML private void handleLogout(ActionEvent event) {
+        inventoryManager.removeObserver(this);
         NavigationUtility.handleLogout(event);
     }
 
-    @FXML private void handleClose(ActionEvent event) { Platform.exit(); }
+    @FXML private void handleClose(ActionEvent event) {
+        inventoryManager.removeObserver(this);
+        Platform.exit(); }
 
     @FXML
     private void handleRefresh() {

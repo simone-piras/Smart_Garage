@@ -3,6 +3,8 @@ package FileDAO;
 import DAO.NotificationDAO;
 import entity.NotificationEntity;
 import exception.FilePersistenceException;
+import utils.SessionManager;
+
 import java.io.*;
 import java.util.*;
 
@@ -11,33 +13,11 @@ public class FileNotificationDAO implements NotificationDAO {
     private static final String FILE_PATH = "data/notifications.txt";
     private static final String NEWLINE_PLACEHOLDER = "@@@NEWLINE@@@";
 
-    @Override
-    public void saveNotification(NotificationEntity n) {
-        List<NotificationEntity> allNotifications = getAllNotifications();
-
-        //Trova il prossimo ID disponibile
-        int nextId;
-        if (allNotifications.isEmpty()) {
-            nextId = 1;
-        } else {
-            nextId = allNotifications.stream().mapToInt(NotificationEntity::getId).max().orElse(0) + 1;
-        }
-
-        //Se la notifica non ha ID, gliene assegno uno
-        if (n.getId() == 0) {
-            n.setId(nextId);
-        }
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
-            writer.write(formatNotification(n));
-            writer.newLine();
-        } catch (IOException e) {
-            throw new FilePersistenceException("Errore scrittura notifica su file: " + e.getMessage(), e);
-        }
+    private String getCurrentUser() {
+        return SessionManager.getInstance().getCurrentUser().getUsername();
     }
 
-    @Override
-    public List<NotificationEntity> getAllNotifications() {
+    private List<NotificationEntity> loadAllRaw() {
         List<NotificationEntity> notifications = new ArrayList<>();
         File file = new File(FILE_PATH);
         if (!file.exists()) return notifications;
@@ -57,61 +37,91 @@ public class FileNotificationDAO implements NotificationDAO {
     }
 
     @Override
-    public void clearNotifications() {
-        try {
-            new FileWriter(FILE_PATH, false).close();
+    public void saveNotification(NotificationEntity n) {
+        List<NotificationEntity> allNotifications = loadAllRaw();
+
+        // Calcolo ID globale
+        int nextId;
+        if (allNotifications.isEmpty()) {
+            nextId = 1;
+        } else {
+            nextId = allNotifications.stream().mapToInt(NotificationEntity::getId).max().orElse(0) + 1;
+        }
+
+        if (n.getId() == 0) {
+            n.setId(nextId);
+        }
+
+        // Imposto Owner se non c'è
+        if (n.getOwnerUsername() == null || n.getOwnerUsername().isEmpty()) {
+            n.setOwnerUsername(getCurrentUser());
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
+            writer.write(formatNotification(n));
+            writer.newLine();
         } catch (IOException e) {
-            throw new FilePersistenceException("Errore nella cancellazione notifiche: " + e.getMessage(), e);
+            throw new FilePersistenceException("Errore scrittura notifica su file: " + e.getMessage(), e);
         }
     }
 
     @Override
+    public List<NotificationEntity> getAllNotifications() {
+        // Solo le mie notifiche
+        return loadAllRaw().stream()
+                .filter(n -> n.getOwnerUsername().equals(getCurrentUser()))
+                .toList();
+    }
+
+    @Override
+    public void clearNotifications() {
+        List<NotificationEntity> allNotifications = loadAllRaw();
+        // Rimuovo SOLO le mie
+        allNotifications.removeIf(n -> n.getOwnerUsername().equals(getCurrentUser()));
+        rewriteAll(allNotifications);
+    }
+
+    @Override
     public void removeNotification(NotificationEntity notification) {
-        List<NotificationEntity> notifications = getAllNotifications();
-        notifications.removeIf(n ->
-                n.getMessage().equals(notification.getMessage()) &&
-                        Objects.equals(n.getPartName(), notification.getPartName()) &&
-                        n.getDate().equals(notification.getDate()));
-        rewriteAll(notifications);
+        List<NotificationEntity> allNotifications = loadAllRaw();
+
+        // Rimuovo se corrisponde ID E owner
+        allNotifications.removeIf(n ->
+                n.getId() == notification.getId() &&
+                        n.getOwnerUsername().equals(getCurrentUser()));
+
+        rewriteAll(allNotifications);
     }
 
     private String formatNotification(NotificationEntity n) {
         String escapedMessage = n.getMessage().replace("\n", NEWLINE_PLACEHOLDER).replace("|", "\\|");
-        return n.getId() + "|" + escapedMessage + "|" +
+
+        return n.getId() + "|" +
+                escapedMessage + "|" +
                 (n.getPartName() != null ? n.getPartName() : "null") + "|" +
                 n.getDate() + "|" +
                 n.isHasSuggestedOrder() + "|" +
-                n.getSuggestedQuantity();
+                n.getSuggestedQuantity() + "|" +
+                n.getOwnerUsername(); // Aggiunto OWNER alla fine
     }
 
-    @SuppressWarnings("java:S106") // Soppressione warning per System.err
+    @SuppressWarnings("java:S106")
     private NotificationEntity parseNotification(String line) {
         try {
             String[] parts = line.split("(?<!\\\\)\\|");
-            //CONTROLLA se ci sono almeno 6 parti
-            if (parts.length >= 6) {
+
+
+            if (parts.length >= 7) {
                 int id = Integer.parseInt(parts[0]);
                 String message = parts[1].replace(NEWLINE_PLACEHOLDER, "\n").replace("\\|", "|");
                 String partName = parts[2].equals("null") ? null : parts[2];
                 String date = parts[3];
                 boolean hasSuggestedOrder = Boolean.parseBoolean(parts[4]);
                 int suggestedQuantity = Integer.parseInt(parts[5]);
+                String owner = parts[6];
 
                 return new NotificationEntity(id, message, date, partName,
-                        hasSuggestedOrder, suggestedQuantity, null);
-            }
-            //SE MANCA L'ID
-            else if (parts.length == 5) {
-                String message = parts[0].replace(NEWLINE_PLACEHOLDER, "\n").replace("\\|", "|");
-                String partName = parts[1].equals("null") ? null : parts[1];
-                String date = parts[2];
-                boolean hasSuggestedOrder = Boolean.parseBoolean(parts[3]);
-                int suggestedQuantity = Integer.parseInt(parts[4]);
-                //Usa direttamente l'hash del messaggio
-                int tempId = message.hashCode();
-
-                return new NotificationEntity(tempId, message, date, partName,
-                        hasSuggestedOrder, suggestedQuantity, null);
+                        hasSuggestedOrder, suggestedQuantity, null, owner);
             } else {
                 System.err.println("Formato notifica non valido: " + line);
                 return null;

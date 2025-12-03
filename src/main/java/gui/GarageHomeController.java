@@ -1,5 +1,6 @@
 package gui;
 
+import boundary.InventoryBoundary;
 import boundary.UserBoundary;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -31,6 +32,11 @@ public class GarageHomeController {
         this.inventoryManager = inventoryManager;
         this.notificationManager = notificationManager;
         this.userBoundary = new UserBoundary();
+        // Creiamo la boundary se non esiste o usiamo quella locale se l'hai definita
+        InventoryBoundary invBoundary = new InventoryBoundary(inventoryManager, notificationManager);
+
+        //Controllo scorte all'ingresso, per gli utenti appena registrati a cui gli è stato assegnato inventario di default
+        invBoundary.scanInventoryForLowStock();
 
         userGreetingLabel.setText("HI " + username.toUpperCase());
 

@@ -4,7 +4,7 @@ import bean.OrderBean;
 import entity.OrderEntity;
 import entity.SupplierEntity;
 import enumerations.OrderStatus;
-
+import utils.SessionManager;
 
 public class OrderMapper implements BeanEntityMapper<OrderBean, OrderEntity> {
 
@@ -20,7 +20,6 @@ public class OrderMapper implements BeanEntityMapper<OrderBean, OrderEntity> {
                 OrderStatus status = OrderStatus.valueOf(entity.getStatus().toUpperCase().replace(" ", "_"));
                 bean.setStatus(status);
             } catch (IllegalArgumentException _) {
-                // Se non trova corrispondenza, usa stato di default
                 bean.setStatus(OrderStatus.CREATING);
             }
         }
@@ -40,13 +39,18 @@ public class OrderMapper implements BeanEntityMapper<OrderBean, OrderEntity> {
     public OrderEntity toEntity(OrderBean bean) {
         if (bean == null) return null;
 
+        // RECUPERO L'UTENTE LOGGATO
+        String currentUser = SessionManager.getInstance().getCurrentUser().getUsername();
+
         SupplierEntity supplierEntity = null;
         if (bean.getSupplierName() != null) {
+            // Nota: qui assumiamo che il fornitore sia generico o gestito altrove
             supplierEntity = new SupplierEntity(bean.getSupplierName(), null, null, false);
         }
 
         String statusString = bean.getStatus() != null ? bean.getStatus().toString() : "CREATING";
 
+        // Aggiungo currentUser alla fine del costruttore
         OrderEntity orderEntity = new OrderEntity(
                 supplierEntity,
                 bean.getItems() != null ?
@@ -54,7 +58,8 @@ public class OrderMapper implements BeanEntityMapper<OrderBean, OrderEntity> {
                                 .map(item -> new OrderItemMapper().toEntity(item))
                                 .toList() : null,
                 statusString,
-                null
+                null,
+                currentUser // <--- QUI
         );
 
         if (bean.getOrderID() != null && !bean.getOrderID().isEmpty()) {

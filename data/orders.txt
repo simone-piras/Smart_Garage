@@ -1,7 +1,6 @@
-e02c59b2|Distribuzione Auto Srl|Delivered|null|Filtro Aria:5,Candele:8
-f6d190e4|Distribuzione Auto Srl|Delivered|null|Fanale Posteriore:10,Cinghia Distribuzione:10,Lampadina Faro:2
-3afbf05d|Distribuzione Auto Srl|Delivered|null|Pastiglie Freno:1,Filtro Olio:1,Filtro Aria:1,Candele:34
-c188fbc4|Distribuzione Auto Srl|Delivered|null|Fanale Posteriore:11
-e5b1abe5|AutoRicambi S.p.A.|Delivered|null|Filtro Olio:4,Candele:6
-8bba3db8|AutoRicambi S.p.A.|Delivered|null|Fanale Posteriore:10,Cinghia Distribuzione:10
-df9aa3e1|AutoRicambi S.p.A.|Delivered|null|Liquido Freni:10,Batteria Auto:3
+c7acc267|PartiVeloci|Delivered|null|Batteria Auto:14,Cinghia Distribuzione:14,Liquido Freni:14,Lampadina Faro:14,Candele:14|admin
+23cb3d90|PartiVeloci|Delivered|null|Liquido Freni:12|utente
+ff1f26da|MeccanicaPlus|Delivered|null|Batteria Auto:10,Cinghia Distribuzione:12,Liquido Freni:11,Lampadina Faro:10,Filtro Olio:10|s.piras.mag
+90d2ac89|MeccanicaPlus|Delivered|null|Candele:6|s.piras.mag
+f486ad1c|PartiVeloci|Delivered|null|Batteria Auto:5,Olio Motore:5|admin
+bab12c4d|MeccanicaPlus|Delivered|null|Batteria Auto:10,Cinghia Distribuzione:12,Liquido Freni:11,Filtro Olio:11,Olio Motore:1|mario

@@ -2,10 +2,12 @@ package controller;
 
 import bean.OrderBean;
 import bean.OrderItemBean;
+import bean.UserBean;
 import enumerations.OrderStatus;
 import org.junit.jupiter.api.*;
 import utils.ApplicationContext;
 import enumerations.PersistenceType;
+import utils.SessionManager;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -27,6 +29,9 @@ class OrderManagerTest {
     void setUp() throws Exception {
         ApplicationContext.getInstance().setPersistenceType(PersistenceType.IN_MEMORY);
 
+        // 👇 LOGIN FAKE
+        UserBean testUser = new UserBean("orderUser", "pass", "ord@test.com");
+        SessionManager.getInstance().login(testUser);
         orderManager = new OrderManager();
         orderDAO = ApplicationContext.getInstance().getDAOFactory().getOrderDAO();
 
@@ -42,6 +47,7 @@ class OrderManagerTest {
             orderDAO.deleteOrder(orderId);
         }
         createdOrderIds.clear();
+        SessionManager.getInstance().logout();
     }
 
     @Test

@@ -15,6 +15,11 @@ public class UserBoundary {
         return userManager.loginUser(username, password);
     }
 
+
+    public boolean loginWithGoogle(String email) {
+        return userManager.loginWithGoogle(email);
+    }
+
     public void registerUser(String username, String password, String email) throws DuplicateUsernameException {
         UserBean userBean = new UserBean();
         userBean.setUsername(username);

@@ -64,4 +64,9 @@ public class InventoryBoundary {
         part.validate();
         inventoryManager.addOrUpdatePart(part); //salva o aggiorna la parte, serve per aggiungere una nuova parte
     }
+
+    //metodo usato per controllare le soglie di scorte nell'inventario di default per i nuovi utenti registrati
+    public void scanInventoryForLowStock() {
+        inventoryManager.checkAllThresholds();
+    }
 }

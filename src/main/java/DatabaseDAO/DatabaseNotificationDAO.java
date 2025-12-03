@@ -4,6 +4,7 @@ import DAO.NotificationDAO;
 import entity.NotificationEntity;
 import utils.DBConnection;
 import exception.DatabaseOperationException;
+import utils.SessionManager;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,7 +12,6 @@ import java.util.List;
 
 public class DatabaseNotificationDAO implements NotificationDAO {
 
-    //COSTANTI PER NOMI COLONNE
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_MESSAGE = "message";
     private static final String COLUMN_DATE = "date";
@@ -19,9 +19,13 @@ public class DatabaseNotificationDAO implements NotificationDAO {
     private static final String COLUMN_HAS_SUGGESTED_ORDER = "has_suggested_order";
     private static final String COLUMN_SUGGESTED_QUANTITY = "suggested_quantity";
 
+    private String getCurrentUser() {
+        return SessionManager.getInstance().getCurrentUser().getUsername();
+    }
+
     @Override
     public void saveNotification(NotificationEntity notification) {
-        String sql = "INSERT INTO notifications (message, date, part_name, has_suggested_order, suggested_quantity) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO notifications (message, date, part_name, has_suggested_order, suggested_quantity, user_username) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, notification.getMessage());
@@ -29,6 +33,7 @@ public class DatabaseNotificationDAO implements NotificationDAO {
             ps.setString(3, notification.getPartName());
             ps.setBoolean(4, notification.isHasSuggestedOrder());
             ps.setInt(5, notification.getSuggestedQuantity());
+            ps.setString(6, getCurrentUser()); // Proprietario
 
             ps.executeUpdate();
 
@@ -45,11 +50,14 @@ public class DatabaseNotificationDAO implements NotificationDAO {
     @Override
     public List<NotificationEntity> getAllNotifications() {
         List<NotificationEntity> notifications = new ArrayList<>();
-        String sql = "SELECT id, message, date, part_name, has_suggested_order, suggested_quantity FROM notifications ORDER BY date DESC";
+        // Filtriamo per utente
+        String sql = "SELECT id, message, date, part_name, has_suggested_order, suggested_quantity FROM notifications WHERE user_username = ? ORDER BY date DESC";
 
         try (Connection conn = DBConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, getCurrentUser());
+            ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
                 NotificationEntity notification = new NotificationEntity(
@@ -58,7 +66,8 @@ public class DatabaseNotificationDAO implements NotificationDAO {
                         rs.getString(COLUMN_PART_NAME),
                         rs.getBoolean(COLUMN_HAS_SUGGESTED_ORDER),
                         rs.getInt(COLUMN_SUGGESTED_QUANTITY),
-                        null
+                        null,
+                        getCurrentUser() // Proprietario
                 );
                 notification.setId(rs.getInt(COLUMN_ID));
 
@@ -72,10 +81,12 @@ public class DatabaseNotificationDAO implements NotificationDAO {
 
     @Override
     public void clearNotifications() {
-        String sql = "DELETE FROM notifications";
+        // Cancella solo le mie notifiche
+        String sql = "DELETE FROM notifications WHERE user_username = ?";
         try (Connection conn = DBConnection.getConnection();
-             Statement stmt = conn.createStatement()) {
-            stmt.executeUpdate(sql);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, getCurrentUser());
+            ps.executeUpdate();
         } catch (SQLException e) {
             throw new DatabaseOperationException("Errore durante la pulizia notifiche: " + e.getMessage(), e);
         }
@@ -83,10 +94,12 @@ public class DatabaseNotificationDAO implements NotificationDAO {
 
     @Override
     public void removeNotification(NotificationEntity notification) {
-        String sql = "DELETE FROM notifications WHERE id = ?";
+        // Cancella solo se è mia e ha quell'ID
+        String sql = "DELETE FROM notifications WHERE id = ? AND user_username = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, notification.getId());
+            ps.setString(2, getCurrentUser());
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new DatabaseOperationException("Errore nell'eliminazione notifica: " + e.getMessage(), e);

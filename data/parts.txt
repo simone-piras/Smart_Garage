@@ -1,10 +1,50 @@
-0|Filtro Olio|74|5
-0|Filtro Aria|223|3
-0|Pastiglie Freno|135|5
-0|Olio Motore|207|4
-0|Candele|94|3
-0|Batteria Auto|54|2
-0|Fanale Posteriore|12|2
-0|Cinghia Distribuzione|14|4
-0|Liquido Freni|15|5
-0|Lampadina Faro|17|3
+0|Filtro Olio|2|2|admin
+0|Filtro Aria|2|2|admin
+0|Batteria Auto|20|1|admin
+0|Olio Motore|15|5|admin
+5|Pastiglie Freno|4|2|admin
+0|Candele|29|7|admin
+7|Fanale Posteriore|15|7|admin
+0|Cinghia Distribuzione|20|8|admin
+0|Liquido Freni|19|6|admin
+0|Lampadina Faro|15|1|admin
+11|Filtro Olio|5|2|utente
+12|Filtro Aria|4|2|utente
+13|Batteria Auto|1|1|utente
+14|Olio Motore|10|5|utente
+15|Pastiglie Freno|4|2|utente
+16|Candele|15|7|utente
+17|Fanale Posteriore|15|7|utente
+18|Cinghia Distribuzione|6|8|utente
+0|Liquido Freni|17|6|utente
+20|Lampadina Faro|2|1|utente
+0|Filtro Olio|12|2|s.piras.mag
+22|Filtro Aria|4|2|s.piras.mag
+0|Batteria Auto|11|1|s.piras.mag
+24|Olio Motore|10|5|s.piras.mag
+25|Pastiglie Freno|4|2|s.piras.mag
+0|Candele|21|7|s.piras.mag
+27|Fanale Posteriore|15|7|s.piras.mag
+0|Cinghia Distribuzione|18|8|s.piras.mag
+0|Liquido Freni|16|6|s.piras.mag
+0|Lampadina Faro|11|1|s.piras.mag
+0|Filtro Olio|2|2|luca
+0|Filtro Aria|2|2|luca
+30|Batteria Auto|1|1|luca
+31|Olio Motore|10|5|luca
+32|Pastiglie Freno|4|2|luca
+33|Candele|15|7|luca
+34|Fanale Posteriore|15|7|luca
+35|Cinghia Distribuzione|6|8|luca
+36|Liquido Freni|5|6|luca
+37|Lampadina Faro|2|1|luca
+0|Filtro Olio|13|2|mario
+39|Filtro Aria|4|2|mario
+0|Batteria Auto|11|1|mario
+0|Olio Motore|11|5|mario
+42|Pastiglie Freno|4|2|mario
+43|Candele|15|7|mario
+44|Fanale Posteriore|15|7|mario
+0|Cinghia Distribuzione|18|8|mario
+0|Liquido Freni|16|6|mario
+47|Lampadina Faro|2|1|mario

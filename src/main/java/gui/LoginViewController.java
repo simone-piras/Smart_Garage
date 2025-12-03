@@ -1,7 +1,6 @@
 package gui;
 
 import boundary.UserBoundary;
-import bean.UserBean;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -77,23 +76,27 @@ public class LoginViewController {
         }
     }
 
+
+
     @FXML
     private void handleGoogleLogin(ActionEvent event) {
         try {
             GoogleLoginManager googleLoginManager = new GoogleLoginManager();
             String email = googleLoginManager.getEmailFromGoogle();
 
-            String username = email.split("@")[0];
+            boolean success = userBoundary.loginWithGoogle(email);
 
-            UserBean user = userBoundary.getUser(username);
-
-            if (user == null) {
+            if (!success) {
                 showError("Credenziali errate o account non registrato");
                 return;
             }
 
+            // Recuperiamo lo username dalla sessione appena creata dal manager
+            String username = utils.SessionManager.getInstance().getCurrentUser().getUsername();
+
             System.out.println("Login Google riuscito per " + username);
 
+            //Caricamento della Home
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GarageHomeView.fxml"));
             Parent root = loader.load();
 
@@ -109,8 +112,8 @@ public class LoginViewController {
             stage.show();
 
         } catch (Exception e) {
-            System.err.println("Errore durante il login con Google: " + e.getMessage());
-            showError("Errore durante il login con Google.");
+            System.err.println("Errore: " + e.getMessage());
+            showError("Errore login Google.");
         }
     }
 

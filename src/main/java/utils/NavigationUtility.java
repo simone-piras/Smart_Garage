@@ -12,6 +12,8 @@ import javafx.stage.Stage;
 
 import java.util.List;
 
+@SuppressWarnings("java:S106")  //Soppressione warning per System.err
+
 public class NavigationUtility {
 
     private NavigationUtility() {
@@ -32,7 +34,7 @@ public class NavigationUtility {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Errore nel caricamento della vista " + fxmlPath + ": " + e.getMessage());
         }
     }
 
@@ -47,7 +49,7 @@ public class NavigationUtility {
             }
             stage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Errore nel caricamento della vista semplice " + fxmlPath + ": " + e.getMessage());
         }
     }
 
@@ -70,7 +72,7 @@ public class NavigationUtility {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Errore nel caricamento della vista ordini: " + e.getMessage());
         }
     }
 
@@ -84,19 +86,21 @@ public class NavigationUtility {
         } catch (NoSuchMethodException _) {
             // Il controller non ha il metodo initData, è normale per alcune viste
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Errore durante l'invocazione di initData: " + e.getMessage());
+
         }
     }
 
     public static void handleLogout(ActionEvent event) {
         try {
+            utils.SessionManager.getInstance().logout();
             Parent root = FXMLLoader.load(NavigationUtility.class.getResource("/fxml/mainView1.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Smart Garage");
             stage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Errore durante il logout: " + e.getMessage());
         }
     }
 }

@@ -7,6 +7,7 @@ import entity.OrderItemEntity;
 import entity.PartEntity;
 import utils.DBConnection;
 import exception.DatabaseOperationException;
+import utils.SessionManager;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,24 +16,29 @@ import java.util.Optional;
 
 public class DatabaseOrderDAO implements OrderDAO {
 
-
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_SUPPLIER_NAME = "supplier_name";
     private static final String COLUMN_STATUS = "status";
     private static final String COLUMN_PART_NAME = "part_name";
     private static final String COLUMN_QUANTITY = "quantity";
 
+    private String getCurrentUser() {
+        return SessionManager.getInstance().getCurrentUser().getUsername();
+    }
+
     @Override
     public void saveOrder(OrderEntity order) {
-        String sql = "INSERT INTO orders (id, supplier_name, status) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO orders (id, supplier_name, status, user_username) VALUES (?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, order.getId());
             ps.setString(2, order.getSupplierName());
             ps.setString(3, order.getStatus());
+            ps.setString(4, getCurrentUser()); // Proprietario
             ps.executeUpdate();
 
+            // Gli item non hanno bisogno dell'utente esplicitamente perché sono legati all'ID dell'ordine
             saveOrderItems(order.getId(), order.getItems(), conn);
 
         } catch (SQLException e) {
@@ -58,12 +64,13 @@ public class DatabaseOrderDAO implements OrderDAO {
 
     @Override
     public Optional<OrderEntity> getOrderByID(String orderID) {
-        // 👇 MODIFICATO: SELECT specifico invece di SELECT *
-        String sql = "SELECT id, supplier_name, status FROM orders WHERE id = ?";
+        // Filtriamo per ID ordine E utente
+        String sql = "SELECT id, supplier_name, status FROM orders WHERE id = ? AND user_username = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, orderID);
+            ps.setString(2, getCurrentUser());
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
@@ -79,7 +86,8 @@ public class DatabaseOrderDAO implements OrderDAO {
                         supplier,
                         items,
                         rs.getString(COLUMN_STATUS),
-                        null
+                        null,
+                        getCurrentUser() // Proprietario
                 );
                 order.setId(rs.getString(COLUMN_ID));
 
@@ -93,6 +101,7 @@ public class DatabaseOrderDAO implements OrderDAO {
 
     private List<OrderItemEntity> getOrderItems(String orderId, Connection conn) throws SQLException {
         List<OrderItemEntity> items = new ArrayList<>();
+        // Qui non serve filtrare per user, perché stiamo già filtrando per order_id che è univoco
         String sql = "SELECT part_name, quantity FROM order_items WHERE order_id = ?";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -103,7 +112,8 @@ public class DatabaseOrderDAO implements OrderDAO {
                 String partName = rs.getString(COLUMN_PART_NAME);
                 int quantity = rs.getInt(COLUMN_QUANTITY);
 
-                PartEntity part = new PartEntity(partName, 0, 0);
+
+                PartEntity part = new PartEntity(partName, 0, 0, getCurrentUser());
                 OrderItemEntity item = new OrderItemEntity(part, quantity, null);
                 items.add(item);
             }
@@ -114,11 +124,14 @@ public class DatabaseOrderDAO implements OrderDAO {
     @Override
     public List<OrderEntity> getAllOrders() {
         List<OrderEntity> orders = new ArrayList<>();
-        String sql = "SELECT id FROM orders";
+        // SOLO GLI ORDINI DELL'UTENTE
+        String sql = "SELECT id FROM orders WHERE user_username = ?";
 
         try (Connection conn = DBConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, getCurrentUser());
+            ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
                 getOrderByID(rs.getString(COLUMN_ID))
@@ -133,19 +146,21 @@ public class DatabaseOrderDAO implements OrderDAO {
     @Override
     public boolean deleteOrder(String orderID) {
         try {
-            // Prima elimina gli order items
-            String deleteItemsSQL = "DELETE FROM order_items WHERE order_id = ?";
+
+            String deleteItemsSQL = "DELETE FROM order_items WHERE order_id = ? AND order_id IN (SELECT id FROM orders WHERE user_username = ?)";
             try (Connection conn = DBConnection.getConnection();
                  PreparedStatement ps = conn.prepareStatement(deleteItemsSQL)) {
                 ps.setString(1, orderID);
+                ps.setString(2, getCurrentUser());
                 ps.executeUpdate();
             }
 
-            // Poi elimina l'ordine
-            String deleteOrderSQL = "DELETE FROM orders WHERE id = ?";
+            // Elimina l'ordine solo se appartiene all'utente
+            String deleteOrderSQL = "DELETE FROM orders WHERE id = ? AND user_username = ?";
             try (Connection conn = DBConnection.getConnection();
                  PreparedStatement ps = conn.prepareStatement(deleteOrderSQL)) {
                 ps.setString(1, orderID);
+                ps.setString(2, getCurrentUser());
                 return ps.executeUpdate() > 0;
             }
         } catch (SQLException e) {
@@ -155,7 +170,7 @@ public class DatabaseOrderDAO implements OrderDAO {
 
     @Override
     public void updateOrder(OrderEntity updatedOrder) {
-        // Per semplicità: elimina e ricrea
+        // Elimina (se mio) e ricrea
         deleteOrder(updatedOrder.getId());
         saveOrder(updatedOrder);
     }

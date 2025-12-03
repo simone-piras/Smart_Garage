@@ -2,6 +2,7 @@ package mapper;
 
 import bean.PartBean;
 import entity.PartEntity;
+import utils.SessionManager;
 
 public class PartMapper implements BeanEntityMapper<PartBean, PartEntity> {
 
@@ -19,6 +20,11 @@ public class PartMapper implements BeanEntityMapper<PartBean, PartEntity> {
     @Override
     public PartEntity toEntity(PartBean bean) {
         if (bean == null) return null;
-        return new PartEntity(bean.getName(), bean.getQuantity(), bean.getReorderThreshold());
+
+        // RECUPERO L'UTENTE LOGGATO
+        String currentUser = SessionManager.getInstance().getCurrentUser().getUsername();
+
+        // Passo l'utente al costruttore della Entity
+        return new PartEntity(bean.getName(), bean.getQuantity(), bean.getReorderThreshold(), currentUser);
     }
 }

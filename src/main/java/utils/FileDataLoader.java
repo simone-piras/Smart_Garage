@@ -2,6 +2,7 @@ package utils;
 
 import controller.InventoryManager;
 
+
 @SuppressWarnings("java:S106")
 public class FileDataLoader extends AbstractDataLoader {
 
@@ -14,18 +15,39 @@ public class FileDataLoader extends AbstractDataLoader {
 
     @Override
     public void load() {
-        // Logica specifica di FileDataLoader
-        if(!inventoryManager.getAllParts().isEmpty()){
-            System.out.println("Dati già caricati, skip...");
+
+        loadCommonUsers();
+
+
+        boolean partsExist = !inventoryManager.getAllParts().isEmpty();
+        boolean suppliersExist = !supplierBoundary.getAllSuppliers().isEmpty();
+
+
+        if (partsExist && suppliersExist) {
+            System.out.println("Tutti i dati su file sono presenti. Skip caricamento.");
+            SessionManager.getInstance().logout();
             return;
         }
 
-        loadCommonParts();
-        loadCommonSuppliers();
-        loadCommonUsers();
+        //Carichiamo ciò che manca
+        if (!partsExist) {
+            System.out.println("Caricamento Parti in corso...");
+            loadCommonParts();
+            // Rigeneriamo le notifiche solo se abbiamo ricaricato le parti
+            notificationManager.clearNotifications();
+            generateCommonNotifications();
+        } else {
+            System.out.println("Parti già presenti.");
+        }
 
-        // Logica specifica per notifiche
-        notificationManager.clearNotifications();
-        generateCommonNotifications();
+        if (!suppliersExist) {
+            System.out.println("Caricamento Fornitori in corso...");
+            loadCommonSuppliers();
+        } else {
+            System.out.println("Fornitori già presenti.");
+        }
+
+        //Logout finale
+        SessionManager.getInstance().logout();
     }
 }

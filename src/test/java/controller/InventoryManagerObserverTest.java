@@ -3,10 +3,12 @@ package controller;
 import bean.NotificationBean;
 import bean.PartBean;
 import DAO.InventoryDAO;
+import bean.UserBean;
 import org.junit.jupiter.api.*;
 import utils.ApplicationContext;
 import enumerations.PersistenceType;
 import observer.Observer;
+import utils.SessionManager;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -52,6 +54,9 @@ class InventoryManagerObserverTest {
 
         ApplicationContext.getInstance().setPersistenceType(PersistenceType.IN_MEMORY); //cosi che non toccano la parte file o database
 
+        // 👇 FINGIAMO IL LOGIN (Cruciale per i test)
+        UserBean testUser = new UserBean("testUser", "pass", "test@test.com");
+        SessionManager.getInstance().login(testUser);
         inventoryManager = new InventoryManager();
         inventoryDAO = ApplicationContext.getInstance().getDAOFactory().getInventoryDAO();
         testObserver = new TestObserver();
@@ -76,6 +81,7 @@ class InventoryManagerObserverTest {
         if (testObserver != null) {
             testObserver.clear();
         }
+        SessionManager.getInstance().logout();
     }
 
     @Test

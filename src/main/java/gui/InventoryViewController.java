@@ -184,6 +184,7 @@ public class InventoryViewController implements Observer {
     }
 
     @FXML private void handleLogout(ActionEvent event) {
+        inventoryManager.removeObserver(this);
         NavigationUtility.handleLogout(event);
     }
 
@@ -192,7 +193,9 @@ public class InventoryViewController implements Observer {
         NavigationUtility.loadView("/fxml/GarageHomeView.fxml", event, loggedUsername, inventoryManager, notificationManager);
     }
 
-    @FXML private void handleClose(ActionEvent event) { Platform.exit(); }
+    @FXML private void handleClose(ActionEvent event) {
+        inventoryManager.removeObserver(this);
+        Platform.exit(); }
 
     @FXML private void toggleSideMenu() { sideMenu.setVisible(!sideMenu.isVisible()); }
 }

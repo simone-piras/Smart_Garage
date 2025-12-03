@@ -3,11 +3,13 @@ package controller;
 
 import bean.PartBean;
 import DAO.InventoryDAO;
+import bean.UserBean;
 import exception.InsufficientStockException;
 import exception.PartNotFoundException;
 import org.junit.jupiter.api.*;
 import utils.ApplicationContext;
 import enumerations.PersistenceType;
+import utils.SessionManager;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -29,6 +31,8 @@ class InventoryManagerTest {
         // Configura persistenza in memoria per i test
         ApplicationContext.getInstance().setPersistenceType(PersistenceType.IN_MEMORY);
 
+        UserBean testUser = new UserBean("invUser", "pass", "inv@test.com");
+        SessionManager.getInstance().login(testUser);
         inventoryManager = new InventoryManager();
         inventoryDAO = ApplicationContext.getInstance().getDAOFactory().getInventoryDAO();
 
@@ -45,6 +49,7 @@ class InventoryManagerTest {
             inventoryDAO.removePart(partName);
         }
         createdPartNames.clear();
+        SessionManager.getInstance().logout();
     }
 
     @Test

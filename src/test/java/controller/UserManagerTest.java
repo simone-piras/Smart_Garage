@@ -5,6 +5,7 @@ import exception.DuplicateUsernameException;
 import org.junit.jupiter.api.*;
 import utils.ApplicationContext;
 import enumerations.PersistenceType;
+import utils.SessionManager;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ class UserManagerTest {
             // Non c'è un metodo delete, quindi puliamo attraverso il DAO se necessario
         }
         createdUsernames.clear();
+        SessionManager.getInstance().logout();
     }
 
     @Test

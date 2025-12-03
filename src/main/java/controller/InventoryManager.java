@@ -80,6 +80,12 @@ public class InventoryManager implements Subject {
         checkThreshold(updatedPart);
     }
 
+    // metodo per i test
+    public Optional<PartBean> getPartByName(String name) {
+        return inventoryDAO.getPartByName(name)
+                .map(entity -> mapperFactory.toBean(entity, PartBean.class));
+    }
+
     public boolean usePart(String partName, int quantityUsed) throws InsufficientStockException, PartNotFoundException {
         PartEntity entity = inventoryDAO.getPartByName(partName)
                 .orElseThrow(() -> new PartNotFoundException("Parte non trovata: " + partName));
@@ -155,6 +161,17 @@ public class InventoryManager implements Subject {
             notifyObserver(notification); //NOTIFICA TUTTI GLI OBSERVER
         } else {
             notificationManager.removeNotificationsByPartName(part.getName());//se sopra soglia rimuove le notifiche esitenti per tale parte dalle notifiche
+        }
+    }
+
+    public void checkAllThresholds() {
+        // Recupera tutti i pezzi dell'utente loggato
+        List<PartBean> userParts = getAllParts();
+
+        // Per ogni pezzo, esegue il controllo soglia
+        // Se è basso, checkThreshold genererà automaticamente la notifica
+        for (PartBean part : userParts) {
+            checkThreshold(part);
         }
     }
 }
