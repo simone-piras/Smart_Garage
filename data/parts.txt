@@ -38,9 +38,9 @@
 35|Cinghia Distribuzione|6|8|luca
 36|Liquido Freni|5|6|luca
 37|Lampadina Faro|2|1|luca
-0|Filtro Olio|13|2|mario
-39|Filtro Aria|4|2|mario
-0|Batteria Auto|11|1|mario
+0|Filtro Olio|19|2|mario
+0|Filtro Aria|10|2|mario
+0|Batteria Auto|17|1|mario
 0|Olio Motore|11|5|mario
 42|Pastiglie Freno|4|2|mario
 43|Candele|15|7|mario

@@ -4,3 +4,4 @@ ff1f26da|MeccanicaPlus|Delivered|null|Batteria Auto:10,Cinghia Distribuzione:12,
 90d2ac89|MeccanicaPlus|Delivered|null|Candele:6|s.piras.mag
 f486ad1c|PartiVeloci|Delivered|null|Batteria Auto:5,Olio Motore:5|admin
 bab12c4d|MeccanicaPlus|Delivered|null|Batteria Auto:10,Cinghia Distribuzione:12,Liquido Freni:11,Filtro Olio:11,Olio Motore:1|mario
+288755a7|AutoRicambi S.p.A.|Delivered|null|Filtro Aria:6,Filtro Olio:6,Batteria Auto:6|mario
